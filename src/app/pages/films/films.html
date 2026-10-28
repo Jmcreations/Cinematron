@@ -1,0 +1,46 @@
+<section class="libraryPage">
+  <header class="pageHero">
+    <p class="kicker">Browse the collection</p>
+    <h1>Films</h1>
+    <p>Stories for every mood, from quiet discoveries to worlds beyond our own.</p>
+    <div class="genreFilters">
+      <button 
+        *ngFor="let genre of genres" 
+        [class.active]="activeGenre === genre"
+        (click)="activeGenre = genre">
+        {{ genre }}
+      </button>
+    </div>
+  </header>
+
+  <section class="filmRow">
+    <div class="sectionHead">
+      <div><p class="kicker">Most watched this week</p><h2>Trending now</h2></div>
+      <button>View all <span>&rarr;</span></button>
+    </div>
+    <div class="filmRail">
+      <div class="grid">
+  <app-movie-card 
+    *ngFor="let movie of movies" 
+    [movie]="movie" 
+    (cardClick)="openDetails($event)">
+  </app-movie-card>
+</div>
+    </div>
+  </section>
+
+  <section class="filmRow">
+    <div class="sectionHead">
+      <div><p class="kicker">Curated collection</p><h2>Science fiction</h2></div>
+      <button>View all <span>&rarr;</span></button>
+    </div>
+    <div class="filmRail">
+  <!-- Trending Rail -->
+   <app-movie-card *ngFor="let movie of trending; let i = index" [movie]="movie" [rank]="i + 1" (cardClick)="openDetails($event)"></app-movie-card>
+</div>
+<div class="filmRail">
+  <!-- Sci-Fi Rail -->
+  <app-movie-card *ngFor="let movie of scifi" [movie]="movie" (cardClick)="openDetails($event)"></app-movie-card>
+</div>
+  </section>
+</section>

@@ -1,0 +1,66 @@
+<section class="watchPage" *ngIf="movie; else watchState">
+  
+  <nav class="watchNav">
+    <button class="back" (click)="goBack()">← Back</button>
+  </nav>
+
+  <div class="player">
+    <iframe *ngIf="isPlaying && videoUrl" [src]="videoUrl" referrerpolicy="origin" width="100%" height="100%" frameborder="0" allowfullscreen allow="autoplay; encrypted-media; fullscreen" style="position: absolute; inset: 0; z-index: 5;"></iframe>
+    
+    <ng-container *ngIf="!isPlaying">
+      <img [src]="movieService.getImageUrl(movie.backdrop_path, 'original')" [alt]="movie.title" />
+      <div class="playerShade"></div>
+      
+      <div class="bigPlay" (click)="playVideo()" *ngIf="videoUrl">
+        <app-icon name="play"></app-icon>
+      </div>
+      
+      <div class="playerInfo">
+        <p>FEATURE FILM</p>
+        <h1>{{ movie.title }}</h1>
+        <span>{{ movie.release_date.substring(0, 4) }} &bull; {{ movie.runtime }}m</span>
+      </div>
+      
+      <div class="timeline">
+        <i>0:00</i>
+        <span></span>
+        <b>{{ movie.runtime }}:00</b>
+      </div>
+    </ng-container>
+  </div>
+
+  <!-- Server Switcher Block -->
+  <div class="serverSwitcher" *ngIf="isPlaying">
+    <span>Streaming Server:</span>
+    <button *ngFor="let server of servers; let i = index" 
+            [class.active]="activeServerIndex === i"
+            (click)="setServer(i)">
+      {{ server.name }}
+    </button>
+  </div>
+
+  <section class="related" *ngIf="similarMovies.length">
+    <div class="episodeHeader">
+      <div>
+        <p class="kicker">More like this</p>
+        <h2>Related Films</h2>
+      </div>
+      <div class="episodeTools">
+        <app-star-rating [rating]="userRating" (ratingChange)="userRating = $event"></app-star-rating>
+      </div>
+    </div>
+    
+    <div class="grid">
+      <app-movie-card *ngFor="let similar of similarMovies" [movie]="similar" (cardClick)="openDetails($event)"></app-movie-card>
+    </div>
+  </section>
+  
+</section>
+
+<ng-template #watchState>
+  <section class="watchState" role="status">
+    <button class="back" (click)="goBack()">← Back</button>
+    <p *ngIf="loading">Loading movie details...</p>
+    <p *ngIf="loadError">Unable to load this movie. Please return and try again.</p>
+  </section>
+</ng-template>

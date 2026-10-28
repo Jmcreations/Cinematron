@@ -1,5 +1,5 @@
 {
-  "name": "verity",
+  "name": "cinematron",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
@@ -7,7 +7,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "serve:ssr:Verity": "node dist/Verity/server/server.mjs"
+    "serve:ssr:Cinematron": "node dist/Cinematron/server/server.mjs"
   },
   "private": true,
   "packageManager": "npm@11.13.0",

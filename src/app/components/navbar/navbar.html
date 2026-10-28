@@ -1,0 +1,30 @@
+<!-- brand and navlinks group -->
+<!-- Replace the <button class="brand"> with this -->
+<a class="brand" routerLink="/">
+  <span>C</span> CINEMATRON
+</a>
+
+<div class="navlinks">
+  <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Home</a>
+  <a routerLink="/list" routerLinkActive="active">My List</a>
+</div>
+
+<!-- right-aligned group -->
+<label class="search">
+  <app-icon name="search"></app-icon>
+  <input placeholder="Search films, people, genres" (input)="onSearch($event)" />
+  <kbd>⌘ K</kbd>
+  
+  <div class="searchDropdown" *ngIf="searchResults.length">
+    <button class="searchResultItem" *ngFor="let result of searchResults" (click)="selectResult(result.id)">
+      {{ result.title }} <span>({{ result.release_date.substring(0,4) }})</span>
+    </button>
+  </div>
+</label>
+
+<div class="navDivider"></div>
+
+<button class="signin" (click)="setAuth(true)">
+  <span class="accountIcon"><app-icon name="user"></app-icon></span>
+  <span>Sign in</span>
+</button>

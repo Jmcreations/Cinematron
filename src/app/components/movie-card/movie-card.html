@@ -1,0 +1,11 @@
+<!-- movie-card.component.html -->
+<button class="movie" (click)="cardClick.emit(movie.id)">
+  <div class="poster">
+    <img [src]="movieService.getImageUrl(movie.poster_path)" [alt]="movie.title" />
+    <b class="rank" *ngIf="rank">{{ rank }}</b>
+    <span class="posterScore">⭐ {{ movie.vote_average.toFixed(1) }}</span>
+    <span class="savedMark" *ngIf="showRemove"><app-icon name="close"></app-icon></span>
+  </div>
+  <h3>{{ movie.title }}</h3>
+  <p>{{ movie.release_date.substring(0, 4) }}</p>
+</button>

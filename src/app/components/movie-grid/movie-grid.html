@@ -1,0 +1,12 @@
+<!-- movie-grid.component.html -->
+<section class="catalog">
+  <div class="sectionHead">
+    <div><p class="kicker">Curated for you</p><h2>Now showing</h2></div>
+    <button>View all <span>&rarr;</span></button>
+  </div>
+  
+  <div class="grid">
+  <app-movie-card *ngFor="let movie of movies" [movie]="movie" (cardClick)="openDetails($event)"></app-movie-card>
+</div>
+
+</section>

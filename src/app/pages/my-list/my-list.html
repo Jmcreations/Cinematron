@@ -1,0 +1,37 @@
+<section class="libraryPage listPage">
+  <header class="pageHero compact">
+    <p class="kicker">Your personal collection</p>
+    <h1>My List</h1>
+    <p>Pick up where you left off or revisit something you saved for later.</p>
+  </header>
+
+  <section class="continue">
+    <div class="sectionHead">
+      <div><p class="kicker">Continue watching</p><h2>Not finished yet</h2></div>
+    </div>
+    <div class="continueGrid">
+      <button class="continueCard" *ngFor="let movie of continueWatching; let i = index">
+        <div>
+          <!-- Using backdrop_path for the horizontal video thumbnail ratio -->
+          <img [src]="movieService.getImageUrl(movie.backdrop_path)" [alt]="movie.title" />
+          <span class="resume"><app-icon name="play"></app-icon></span>
+          <!-- Mock progress bar calculation -->
+          <i><b [style.width.%]="42 + (i * 17)"></b></i>
+        </div>
+        <small>Film &bull; {{ 18 + (i * 12) }} min left</small>
+        <h3>{{ movie.title }}</h3>
+        <p>Resume watching</p>
+      </button>
+    </div>
+  </section>
+
+  <section class="savedSection">
+    <div class="sectionHead">
+      <div><p class="kicker">Saved for later</p><h2>My watchlist</h2></div>
+      <button>Recently added &darr;</button>
+    </div>
+    <div class="grid">
+  <app-movie-card *ngFor="let movie of watchlist" [movie]="movie" [showRemove]="true" (cardClick)="openDetails($event)"></app-movie-card>
+</div>
+  </section>
+</section>

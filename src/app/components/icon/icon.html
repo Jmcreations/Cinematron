@@ -1,0 +1,22 @@
+<svg aria-hidden="true" viewBox="0 0 24 24">
+  @switch (name) {
+    @case ('search') {
+    <circle cx="11" cy="11" r="7" /><path d="m20 20-4-4" />
+    }
+    @case ('play') {
+    <path d="m9 7 8 5-8 5V7Z" />
+    }
+    @case ('plus') {
+    <path d="M12 5v14M5 12h14" />
+    }
+    @case ('close') {
+    <path d="m6 6 12 12M18 6 6 18" />
+    }
+    @case ('user') {
+    <circle cx="12" cy="8" r="3.5" /><path d="M5.5 20c.7-4 3-6 6.5-6s5.8 2 6.5 6" />
+    }
+  }
+</svg>
+<svg *ngIf="name === 'chevron-left'" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6" /></svg>
+<svg *ngIf="name === 'chevron-right'" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6" /></svg>
+<svg *ngIf="name === 'chevron-down'" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" /></svg>

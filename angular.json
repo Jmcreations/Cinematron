@@ -6,7 +6,7 @@
   },
   "newProjectRoot": "projects",
   "projects": {
-    "Verity": {
+    "Cinematron": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -64,10 +64,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "Verity:build:production"
+              "buildTarget": "Cinematron:build:production"
             },
             "development": {
-              "buildTarget": "Verity:build:development"
+              "buildTarget": "Cinematron:build:development"
             }
           },
           "defaultConfiguration": "development"

@@ -6,6 +6,7 @@ import { WatchComponent } from './components/watch/watch';
 export const routes: Routes = [
   { path: '', component: DiscoverComponent, pathMatch: 'full' }, 
   { path: 'list', component: MyListComponent },
+  { path: 'watch/:type/:id', component: WatchComponent },
   { path: 'watch/:id', component: WatchComponent },
   { path: '**', redirectTo: '' }
 ];

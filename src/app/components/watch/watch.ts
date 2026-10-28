@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { MovieService, TMDBMovie } from '../../services/movie';
 import { MovieCardComponent } from '../../components/movie-card/movie-card';
@@ -12,7 +12,7 @@ import { catchError, of, switchMap, timeout } from 'rxjs';
 @Component({
   selector: 'app-watch',
   standalone: true,
-  imports: [CommonModule, MovieCardComponent, IconComponent, StarRatingComponent],
+  imports: [CommonModule, RouterModule, MovieCardComponent, IconComponent, StarRatingComponent],
   templateUrl: './watch.html',
   styleUrl: './watch.css'
 })
@@ -25,97 +25,114 @@ export class WatchComponent implements OnInit {
   sanitizer = inject(DomSanitizer);
   changeDetector = inject(ChangeDetectorRef);
 
-  movie: any = null;
+  mediaType: 'movie' | 'tv' = 'movie';
+  media: any = null;
   videoUrl: SafeResourceUrl | null = null;
   similarMovies: TMDBMovie[] = [];
-  
+
+  seasons: any[] = [];
+  episodes: any[] = [];
+  activeSeason = 1;
+  activeEpisode = 1;
+
+  activeServerIndex = 0;
+  isPlaying = false;
   loading = true;
   loadError = false;
-  isPlaying = false;
   userRating = 0;
 
-  currentMovieId: number | null = null;
-  activeServerIndex = 0;
-
-  // Add or modify server URLs here
+  // Unified Server Config
   servers = [
-    { name: 'VidSrc (Main)', getUrl: (id: number) => `https://vidsrc.me/embed/movie?tmdb=${id}` },
-    { name: 'Coconut', getUrl: (id: number) => `https://watch.embed-api.stream/embed/movie/533535` },
-    { name: 'SuperEmbed (Alt 2)', getUrl: (id: number) => `https://multiembed.mov/directstream.php?video_id=${id}&tmdb=1` }
+    {
+      name: 'VidSrc (Main)',
+      getMovieUrl: (id: number) => `https://vidsrc.me/embed/movie?tmdb=${id}`,
+      getTvUrl: (id: number, s: number, e: number) => `https://vidsrc.me/embed/tv?tmdb=${id}&season=${s}&episode=${e}`
+    },
+    {
+      name: 'VidLink (Alt 1)',
+      getMovieUrl: (id: number) => `https://vidlink.pro/movie/${id}`,
+      getTvUrl: (id: number, s: number, e: number) => `https://vidlink.pro/tv/${id}/${s}/${e}`
+    }
   ];
 
   ngOnInit() {
     this.route.paramMap.pipe(
       switchMap(params => {
+        const type = (params.get('type') || 'movie') as 'movie' | 'tv';
         const id = Number(params.get('id'));
-        if (!id) {
-          this.router.navigate(['/']);
-          return of(null);
-        }
-        
+        if (!id) return of(null);
+
+        this.mediaType = type;
         this.loading = true;
-        this.loadError = false;
-        this.movie = null;
-        this.videoUrl = null;
-        this.similarMovies = [];
         this.changeDetector.markForCheck();
-        
-        return this.movieService.getMovieDetails(id).pipe(
+
+        const fetchRequest$ = this.mediaType === 'tv'
+          ? this.movieService.getTvDetails(id)
+          : this.movieService.getMovieDetails(id);
+
+        return fetchRequest$.pipe(
           timeout(15000),
           catchError(error => {
-            console.error('Unable to load watch page', error);
+            console.error('API Error', error);
             this.loadError = true;
             return of(null);
           })
         );
       })
     ).subscribe(data => {
-      if (!data) {
-        this.loading = false;
-        this.changeDetector.markForCheck();
-        return;
-      }
-      
-      this.movie = data;
+      if (!data) return;
+
+      this.media = data;
       this.isPlaying = false;
-      this.currentMovieId = data.id;
-      
-      // Set default server (Index 0)
-      this.setServer(0);
-      
-      if (this.movie.genres?.length) {
-        this.movieService.getMoviesByGenre(this.movie.genres[0].id).subscribe(movies => {
+      this.activeEpisode = 1;
+
+      if (this.mediaType === 'tv') {
+        this.seasons = data.seasons?.filter((s: any) => s.season_number > 0) || [];
+        if (this.seasons.length > 0) this.loadSeason(this.seasons[0].season_number);
+      }
+
+      if (this.media.genres?.length) {
+        this.movieService.getMoviesByGenre(this.media.genres[0].id).subscribe(movies => {
           this.similarMovies = movies.slice(0, 4);
-          this.changeDetector.markForCheck(); 
+          this.changeDetector.markForCheck();
         });
       }
-      
+
       this.loading = false;
       this.changeDetector.markForCheck();
     });
   }
 
+  loadSeason(seasonNumber: number) {
+    this.activeSeason = seasonNumber;
+    this.movieService.getTvSeason(this.media.id, seasonNumber).subscribe(seasonData => {
+      this.episodes = seasonData.episodes || [];
+      this.changeDetector.markForCheck();
+    });
+  }
+
+  updateVideoUrl() {
+    if (!this.media) return;
+    const server = this.servers[this.activeServerIndex];
+    const url = this.mediaType === 'tv'
+      ? server.getTvUrl(this.media.id, this.activeSeason, this.activeEpisode)
+      : server.getMovieUrl(this.media.id);
+
+    this.videoUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+    this.changeDetector.markForCheck();
+  }
+
+  playContent(episodeNumber = 1) {
+    this.activeEpisode = episodeNumber;
+    this.isPlaying = true;
+    this.updateVideoUrl();
+  }
+
   setServer(index: number) {
-    if (this.currentMovieId) {
-      this.activeServerIndex = index;
-      const url = this.servers[index].getUrl(this.currentMovieId);
-      this.videoUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
-      this.changeDetector.markForCheck();
-    }
+    this.activeServerIndex = index;
+    if (this.isPlaying) this.updateVideoUrl();
   }
 
-  playVideo() {
-    if (this.videoUrl) {
-      this.isPlaying = true;
-      this.changeDetector.markForCheck();
-    }
-  }
-
-  goBack() {
-    this.location.back();
-  }
-
-  openDetails(id: number) {
-    this.overlayService.openDetails(id);
-  }
+  goBack() { this.location.back(); }
+  openDetails(id: number) { this.overlayService.openDetails(id); }
 }

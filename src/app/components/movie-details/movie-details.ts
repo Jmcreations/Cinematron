@@ -96,7 +96,7 @@ export class MovieDetailsComponent implements OnInit {
     if (this.movie) {
       const movieId = this.movie.id;
       this.closeDetails();
-      this.router.navigate(['/watch', movieId]);
+      this.router.navigate(['/watch', 'movie', movieId]);
     }
   }
 

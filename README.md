@@ -59,6 +59,23 @@ npm run build
 npm run serve:ssr:Cinematron
 ```
 
+## Database migrations
+
+The schema is managed with Alembic rather than being created during application
+import. Apply pending migrations with:
+
+```bash
+npm run migrate
+```
+
+`npm start` runs migrations before starting the local API. Vercel runs them
+when the Python function is initialized. Create a new revision with Alembic
+after changing the SQLAlchemy models, review it, and commit the revision:
+
+```bash
+backend/venv/bin/alembic revision --autogenerate -m "describe schema change"
+```
+
 ### Python API on Vercel
 
 The Python API is exposed through [api/index.py](./api/index.py), so Vercel

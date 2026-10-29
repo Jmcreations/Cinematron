@@ -6,7 +6,6 @@ from dotenv import load_dotenv
 from fastapi import FastAPI, Depends, HTTPException, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import create_engine, Column, Integer, String, UniqueConstraint
-from sqlalchemy.exc import OperationalError
 from sqlalchemy.orm import sessionmaker, declarative_base, Session
 from pydantic import BaseModel
 
@@ -54,18 +53,6 @@ class WatchlistDB(Base):
     media_id = Column(Integer, index=True)
     media_type = Column(String)
     __table_args__ = (UniqueConstraint('user_id', 'media_id', 'media_type', name='_user_watchlist_uc'),)
-
-def initialize_database():
-    try:
-        Base.metadata.create_all(bind=engine)
-    except OperationalError as error:
-        if "already exists" not in str(error).lower():
-            raise
-
-
-# Create tables in the database. A concurrent cold start may win the same
-# CREATE TABLE race; that specific outcome is safe to continue from.
-initialize_database()
 
 # 3. Pydantic Models (Frontend Payload Validation)
 class RatingCreate(BaseModel):

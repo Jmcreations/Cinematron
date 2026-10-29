@@ -1,6 +1,6 @@
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
-import { spawn } from 'node:child_process';
+import { spawn, spawnSync } from 'node:child_process';
 
 const candidates = process.platform === 'win32'
   ? [join('backend', 'venv', 'Scripts', 'python.exe'), 'python']
@@ -10,6 +10,11 @@ const python = candidates.find(executable => executable === 'python' || executab
 if (!python) {
   console.error('Python was not found. Create a virtual environment and install requirements.txt.');
   process.exit(1);
+}
+
+const migration = spawnSync(python, ['-m', 'backend.migrate'], { stdio: 'inherit' });
+if (migration.status !== 0) {
+  process.exit(migration.status ?? 1);
 }
 
 const child = spawn(

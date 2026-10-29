@@ -5,6 +5,7 @@
     "ng": "ng",
     "start": "concurrently --kill-others-on-fail \"npm run start:api\" \"ng serve --proxy-config proxy.conf.json\"",
     "start:api": "node scripts/start-api.mjs",
+    "migrate": "node scripts/run-migrations.mjs",
     "build": "node --env-file=.env node_modules/@angular/cli/bin/ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",

@@ -28,11 +28,12 @@
   color: white;
   text-decoration: none;
 }
-.brand span {
+/*.brand span {
   width: 28px; height: 28px; border-radius: 6px 6px 6px 2px;
-  background: var(--plum); display: grid; place-items: center;
+  background: #640157; display: grid; place-items: center;
   font-family: serif; font-size: 15px;
-}
+}*/
+
 .back {
   color: #9a969a;
   font-size: 12px;

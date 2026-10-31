@@ -15,6 +15,8 @@ export interface TMDBMovie {
   media_type?: 'movie' | 'tv'; // Returned by multi-search
 }
 
+export type MediaType = 'movie' | 'tv';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -35,6 +37,18 @@ export class MovieService {
 
   getImageUrl(path: string, width: string = 'w500'): string {
     return `https://image.tmdb.org/t/p/${width}${path}`;
+  }
+
+  getTitle(media: Pick<TMDBMovie, 'title' | 'name'>): string {
+    return media.title || media.name || 'Untitled';
+  }
+
+  getReleaseDate(media: Pick<TMDBMovie, 'release_date' | 'first_air_date'>): string {
+    return media.release_date || media.first_air_date || '';
+  }
+
+  getMediaType(media: Pick<TMDBMovie, 'media_type'>): MediaType {
+    return media.media_type || 'movie';
   }
 
   getNowPlayingMovies(): Observable<TMDBMovie[]> {

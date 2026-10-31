@@ -40,8 +40,8 @@ export class NavbarComponent {
     this.searchSubject.next((event.target as HTMLInputElement).value);
   }
 
-  selectResult(id: number) {
-    this.overlayService.openDetails(id);
+  selectResult(result: TMDBMovie) {
+    this.overlayService.openDetails(result.id, this.movieService.getMediaType(result));
     this.searchResults = []; // Clear dropdown
   }
 

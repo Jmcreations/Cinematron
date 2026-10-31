@@ -15,11 +15,11 @@
     <!-- Restored Text & Buttons -->
     <div class="heroContent">
       <p class="eyebrow"><span></span> Featured premiere</p>
-      <h1>{{ movies[heroIndex].title }}</h1>
+      <h1>{{ movieService.getTitle(movies[heroIndex]) }}</h1>
 
       <div class="meta">
-        <b>{{ (movies[heroIndex].release_date || movies[heroIndex].first_air_date)?.substring(0, 4) || '' }}</b>
-        <span>Film</span>
+        <b>{{ movieService.getReleaseDate(movies[heroIndex]).substring(0, 4) }}</b>
+        <span>{{ movieService.getMediaType(movies[heroIndex]) === 'tv' ? 'TV Series' : 'Film' }}</span>
         <span class="score">⭐ {{ movies[heroIndex].vote_average.toFixed(1) }}</span>
       </div>
 

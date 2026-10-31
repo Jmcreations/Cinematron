@@ -12,11 +12,30 @@ if (!python) {
   process.exit(1);
 }
 
-const tmdbApiKey = process.env.TMDB_API_KEY?.trim();
-if (!tmdbApiKey || tmdbApiKey === 'replace_with_your_tmdb_api_key') {
+const tmdbAccessToken = process.env.TMDB_READ_ACCESS_TOKEN?.trim();
+if (!tmdbAccessToken || tmdbAccessToken === 'replace_with_your_tmdb_read_access_token') {
   console.error(
-    'TMDB_API_KEY is missing. Copy .env.example to .env and set TMDB_API_KEY before starting the API.'
+    'TMDB_READ_ACCESS_TOKEN is missing. Copy .env.example to .env and set the TMDB API Read Access Token before starting the API.'
   );
+  process.exit(1);
+}
+
+try {
+  const tmdbResponse = await fetch(
+    'https://api.themoviedb.org/3/trending/movie/week',
+    { headers: { Authorization: `Bearer ${tmdbAccessToken}` } }
+  );
+  if (!tmdbResponse.ok) {
+    const details = await tmdbResponse.json().catch(() => ({}));
+    console.error(
+      `TMDB_READ_ACCESS_TOKEN was rejected (${tmdbResponse.status}): ${
+        details.status_message || 'TMDB request failed.'
+      }`
+    );
+    process.exit(1);
+  }
+} catch (error) {
+  console.error('Unable to validate TMDB_API_KEY. Check your network connection.', error);
   process.exit(1);
 }
 

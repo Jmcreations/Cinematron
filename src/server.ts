@@ -28,12 +28,12 @@ const angularApp = new AngularNodeAppEngine({
  */
 
 /**
- * Proxy TMDB requests server-side so the API key remains outside the browser bundle.
+ * Proxy TMDB requests server-side so the read access token remains outside the browser bundle.
  */
 app.use('/api/tmdb', async (req, res, next) => {
-  const apiKey = process.env['TMDB_API_KEY'];
-  if (!apiKey) {
-    res.status(500).json({ error: 'TMDB_API_KEY is not configured on the server.' });
+  const accessToken = process.env['TMDB_READ_ACCESS_TOKEN'];
+  if (!accessToken) {
+    res.status(500).json({ error: 'TMDB_READ_ACCESS_TOKEN is not configured on the server.' });
     return;
   }
 
@@ -45,8 +45,9 @@ app.use('/api/tmdb', async (req, res, next) => {
 
   try {
     const requestUrl = new URL(`https://api.themoviedb.org${req.url}`);
-    requestUrl.searchParams.set('api_key', apiKey);
-    const response = await fetch(requestUrl);
+    const response = await fetch(requestUrl, {
+      headers: { Authorization: `Bearer ${accessToken}` }
+    });
     const body = await response.text();
 
     res.status(response.status);

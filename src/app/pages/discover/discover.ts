@@ -24,7 +24,7 @@ export class DiscoverComponent implements OnInit {
 
   top10: TMDBMovie[] = [];
   continueWatching: TMDBMovie[] = [];
-  
+
   genres: any[] = [];
   selectedGenre = { id: 28, name: 'Action' }; // Default to Action
   genreMovies: TMDBMovie[] = [];
@@ -84,7 +84,9 @@ export class DiscoverComponent implements OnInit {
     this.genreSelection.next({ id, name });
   }
 
-  openDetails(id: number) {
-    this.overlayService.openDetails(id);
+  openDetails(event: any) {
+    const id = typeof event === 'number' ? event : event.id;
+    const type = event.type || 'movie';
+    this.overlayService.openDetails(id, type);
   }
 }

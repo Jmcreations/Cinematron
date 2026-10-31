@@ -2,7 +2,9 @@
 
   <header class="watchHeader">
     <div class="headerLeft">
-      <a routerLink="/" class="brand"><span>C</span> CINEMATRON</a>
+      <a class="brand" href="/" aria-label="Cinematron Home">
+        <img class="brand-image" src="/trlogo.png" alt=""><span>Cinematron</span>
+      </a>
       <button class="back" (click)="goBack()">← Back to details</button>
     </div>
     <button class="profileBtn"><app-icon name="user"></app-icon> Profile</button>

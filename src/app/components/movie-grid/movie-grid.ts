@@ -24,7 +24,9 @@ export class MovieGridComponent implements OnInit {
     });
   }
 
-  openDetails(id: number) {
-    this.overlayService.openDetails(id);
+  openDetails(event: any) {
+    const id = typeof event === 'number' ? event : event.id;
+    const type = event.type || 'movie';
+    this.overlayService.openDetails(id, type);
   }
 }

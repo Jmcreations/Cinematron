@@ -1,108 +1,112 @@
 .watchPage {
   min-height: 100vh;
-  padding: 92px 6vw 70px;
   background: #121212;
-  color: var(--ink);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
 }
 
-.watchNav {
-  margin-bottom: 20px;
+/* Header */
+.watchHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 4vw;
+  background: #121212;
 }
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font: 700 13px/1 "Manrope", sans-serif;
+  letter-spacing: .2em;
+  color: white;
+  text-decoration: none;
+}
+/*.brand span {
+  width: 28px; height: 28px; border-radius: 6px 6px 6px 2px;
+  background: #640157; display: grid; place-items: center;
+  font-family: serif; font-size: 15px;
+}*/
 
 .back {
-  color: #d7b6cc;
+  color: #9a969a;
+  font-size: 12px;
   cursor: pointer;
-  font-size: 13px;
+  background: transparent;
+  border: none;
+  transition: color 0.2s;
+}
+.back:hover { color: white; }
+.profileBtn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: #1f1d1f;
+  border: 1px solid #3b373a;
+  border-radius: 8px;
+  color: #d6d1d4;
+  font-size: 12px;
+  cursor: pointer;
 }
 
+/* Cinematic Player - Edge to Edge */
 .player {
   position: relative;
   width: 100%;
-  max-width: 1180px;
-  aspect-ratio: 16 / 9;
-  margin: 0 auto;
+  height: 0;
+  aspect-ratio: 21 / 9;
+  max-height: 75vh;
+  background: #000;
   overflow: hidden;
-  border: 1px solid #403b3f;
-  border-radius: 12px;
-  background: #181818;
 }
-
 .player > img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  width: 100%; height: 100%; object-fit: cover;
+  filter: brightness(0.6);
 }
-
 .playerShade {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(90deg, #050505dd, transparent 75%), linear-gradient(0deg, #050505dd, transparent 50%);
+  position: absolute; inset: 0;
+  background: linear-gradient(0deg, #121212 0%, transparent 60%);
 }
-
 .bigPlay {
-  position: absolute;
-  z-index: 2;
-  left: 50%;
-  top: 50%;
-  width: 64px;
-  height: 64px;
-  display: grid;
-  place-items: center;
+  position: absolute; left: 50%; top: 50%;
   transform: translate(-50%, -50%);
-  border-radius: 50%;
-  background: var(--plum);
-  cursor: pointer;
-  transition: transform .2s ease, background .2s ease;
+  width: 72px; height: 72px; border-radius: 50%;
+  background: rgba(30, 30, 30, 0.7);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: grid; place-items: center;
+  cursor: pointer; z-index: 10;
+  transition: 0.2s ease;
 }
-
-.bigPlay:hover {
-  transform: translate(-50%, -50%) scale(1.12);
-  background: var(--plum2);
-}
+.bigPlay:hover { background: rgba(50, 50, 50, 0.9); transform: translate(-50%, -50%) scale(1.05); }
 
 .playerInfo {
-  position: absolute;
-  z-index: 2;
-  left: 30px;
-  bottom: 45px;
+  position: absolute; left: 4vw; bottom: 40px; z-index: 10;
 }
-
-.playerInfo p {
-  color: #d7b6cc;
-  font-size: 10px;
-  letter-spacing: .18em;
-}
-
-.playerInfo h1 {
-  margin: 8px 0;
-  font-size: clamp(30px, 5vw, 64px);
-}
-
-.playerInfo span {
-  color: #c2bec1;
-  font-size: 13px;
-}
+.playerInfo p { margin: 0; color: #b776a3; font-size: 11px; letter-spacing: 0.15em; font-weight: 600; }
+.playerInfo h1 { margin: 4px 0 8px; font: 800 48px "Manrope"; letter-spacing: -0.03em; }
+.playerInfo span { color: #a9a4a8; font-size: 12px; }
 
 .timeline {
-  position: absolute;
-  z-index: 2;
-  right: 30px;
-  bottom: 28px;
-  left: 30px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  color: #c2bec1;
-  font-size: 11px;
+  position: absolute; left: 4vw; right: 4vw; bottom: 15px; z-index: 10;
+  display: flex; align-items: center; gap: 15px;
+  font-size: 10px; color: #a9a4a8; font-family: monospace;
+}
+.timeline .track {
+  flex: 1; height: 3px; background: #3b373a; border-radius: 2px; overflow: hidden;
+}
+.timeline .fill {
+  height: 100%; background: #9d4e83;
 }
 
-.timeline span {
-  height: 3px;
-  flex: 1;
-  background: #8d4777;
-}
-
-/* Server Switcher matching Figma alignment */
+/* Server Switcher */
 .serverSwitcher {
   display: flex;
   align-items: center;
@@ -113,62 +117,45 @@
   width: 100%;
   padding: 24px 4vw 0;
 }
+.serverSwitcher span { color: #885776; font-size: 11px; text-transform: uppercase; letter-spacing: 0.15em; font-weight: 600; }
+.serverSwitcher button { padding: 8px 16px; border-radius: 20px; background: #1a191a; border: 1px solid #3b373a; color: #9a969a; font-size: 12px; cursor: pointer; transition: 0.2s ease; }
+.serverSwitcher button:hover { background: #282528; color: white; }
+.serverSwitcher button.active { background: #823f6b; border-color: #9d4e83; color: white; }
 
-.serverSwitcher span {
-  color: #885776;
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  font-weight: 600;
+/* Page Content Below Player */
+.watchContent {
+  padding: 50px 4vw 80px;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
 }
 
-.serverSwitcher button {
-  padding: 8px 16px;
-  border-radius: 20px;
-  background: #1a191a;
-  border: 1px solid #3b373a;
-  color: #9a969a;
-  font-size: 12px;
-  cursor: pointer;
-  transition: 0.2s ease;
+.sectionHeader {
+  display: flex; justify-content: space-between; align-items: flex-end;
+  margin-bottom: 24px; border-bottom: 1px solid #2a282a; padding-bottom: 16px;
 }
+.sectionHeader .kicker { color: #885776; font-size: 11px; letter-spacing: 0.15em; font-weight: 600; margin: 0 0 6px; text-transform: uppercase; }
+.sectionHeader h2 { margin: 0; font: 700 28px "Manrope"; }
 
-.serverSwitcher button:hover {
-  background: #282528;
-  color: white;
-}
+/* Header Tools (Rating & Season Toggle) */
+.headerTools { display: flex; align-items: center; gap: 24px; }
+.ratingWrapper { display: flex; align-items: center; gap: 10px; border: 1px solid #3b373a; padding: 6px 14px; border-radius: 8px; background: #181618; }
+.seasonToggle { display: flex; background: #1a191a; border: 1px solid #3b373a; border-radius: 8px; overflow: hidden; }
+.seasonToggle button { padding: 8px 16px; font-size: 12px; color: #9a969a; border: none; background: transparent; cursor: pointer;}
+.seasonToggle button.active { background: #823f6b; color: white; }
 
-.serverSwitcher button.active {
-  background: #823f6b;
-  border-color: #9d4e83;
-  color: white;
-}
+/* Episodes Grid */
+.episodesSection { margin-bottom: 60px; }
+.episodeGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.episodeCard { display: flex; gap: 20px; background: #151415; border: 1px solid #2a282a; border-radius: 8px; overflow: hidden; cursor: pointer; transition: 0.2s; }
+.episodeCard:hover { border-color: #4a4549; background: #1a191a; }
+.epThumb { position: relative; width: 160px; flex-shrink: 0; }
+.epThumb img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.6); }
+.epThumb app-icon { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 24px; height: 24px; color: white; opacity: 0.8; }
+.epDetails { padding: 20px 20px 20px 0; display: flex; flex-direction: column; justify-content: center; }
+.epMeta { color: #885776; font-size: 10px; font-weight: 600; letter-spacing: 0.1em; margin: 0 0 6px; }
+.epDetails h3 { margin: 0 0 8px; font-size: 16px; font-weight: 600; }
+.epDesc { margin: 0; font-size: 12px; color: #8a8589; line-height: 1.5; }
 
-.related {
-  max-width: 1180px;
-  margin: 42px auto 0;
-}
-
-.watchState {
-  min-height: 100vh;
-  display: grid;
-  place-content: center;
-  justify-items: center;
-  gap: 18px;
-  color: var(--ink);
-}
-
-@media (max-width: 700px) {
-  .watchPage {
-    padding: 84px 5vw 50px;
-  }
-  .playerInfo {
-    left: 20px;
-    bottom: 35px;
-  }
-  .timeline {
-    right: 20px;
-    bottom: 18px;
-    left: 20px;
-  }
-}
+/* Utilities */
+.watchState { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; }

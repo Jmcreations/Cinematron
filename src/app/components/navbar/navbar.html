@@ -1,8 +1,8 @@
 <!-- brand and navlinks group -->
 <!-- Replace the <button class="brand"> with this -->
-<a class="brand" routerLink="/">
-  <span>C</span> CINEMATRON
-</a>
+  <a class="brand" href="/" aria-label="Cinematron Home">
+    <img class="brand-image" src="/trlogo.png" alt=""><span>Cinematron</span>
+  </a>
 
 <div class="navlinks">
   <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Home</a>
@@ -18,15 +18,13 @@
     (keyup.enter)="submitSearch($event)"
   />
   <kbd>⌘ K</kbd>
-  
+
   <div class="searchDropdown" *ngIf="searchResults.length">
-    <button class="searchResultItem" *ngFor="let result of searchResults" (click)="selectResult(result.id)">
-      <div style="display: flex; align-items: center; gap: 10px;">
-        <img *ngIf="result.poster_path" [src]="movieService.getImageUrl(result.poster_path, 'w92')" style="width: 32px; height: 48px; border-radius: 4px; object-fit: cover;" />
-        <div style="display: flex; flex-direction: column; text-align: left;">
-          {{ result.title }}
-          <span>({{ result.release_date.substring(0, 4) }})</span>
-        </div>
+    <button class="searchResultItem" *ngFor="let result of searchResults" (click)="selectResult(result)">
+      <img *ngIf="result.poster_path" [src]="movieService.getImageUrl(result.poster_path, 'w92')" [alt]="movieService.getTitle(result)" />
+      <div style="display: flex; flex-direction: column; text-align: left;">
+        {{ movieService.getTitle(result) }}
+        <span>{{ movieService.getMediaType(result) === 'tv' ? 'TV Series' : 'Film' }} · {{ movieService.getReleaseDate(result).substring(0, 4) }}</span>
       </div>
     </button>
   </div>

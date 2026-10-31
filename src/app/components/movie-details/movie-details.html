@@ -1,5 +1,5 @@
 <ng-container *ngIf="visible">
-  <div class="overlay" role="dialog" aria-modal="true" aria-label="Movie details">
+  <div class="overlay" role="dialog" aria-modal="true" [attr.aria-label]="mediaType === 'tv' ? 'TV series details' : 'Movie details'">
   <button class="close" (click)="closeDetails()" aria-label="Close" *ngIf="loading || loadError">
     <app-icon name="close"></app-icon>
   </button>
@@ -11,17 +11,17 @@
     
     <!-- Left Side: Poster -->
     <div class="detailPoster">
-      <img [src]="movieService.getImageUrl(movie.poster_path, 'w780')" [alt]="movie.title" />
+      <img [src]="movieService.getImageUrl(movie.poster_path, 'w780')" [alt]="movieService.getTitle(movie)" />
     </div>
     
     <!-- Right Side: Details & Actions -->
     <div class="detailCopy">
       <p class="kicker">{{ movie.tagline || 'A Cinematic Experience' }}</p>
-      <h2>{{ movie.title }}</h2>
+      <h2>{{ movieService.getTitle(movie) }}</h2>
       
       <div class="meta">
-        <b>{{ movie.release_date.substring(0, 4) }}</b>
-        <span>{{ movie.runtime }}m</span>
+        <b>{{ movieService.getReleaseDate(movie).substring(0, 4) }}</b>
+        <span>{{ mediaType === 'tv' ? (movie.episode_run_time?.[0] || 0) : (movie.runtime || 0) }}m</span>
         <span>⭐ {{ movie.vote_average.toFixed(1) }}</span>
         <span *ngFor="let genre of movie.genres | slice:0:2">{{ genre.name }}</span>
       </div>
@@ -39,7 +39,7 @@
       </div>
       
       <div class="rating">
-        <p>Rate this film</p>
+        <p>Rate this {{ mediaType === 'tv' ? 'series' : 'film' }}</p>
         <app-star-rating [rating]="userRating" (ratingChange)="userRating = $event"></app-star-rating>
       </div>
       

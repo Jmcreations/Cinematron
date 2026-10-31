@@ -7,38 +7,39 @@
     <img class="heroImage heroImageCurrent" [src]="movieService.getImageUrl(movies[heroIndex].backdrop_path, 'original')" alt="" />
     <img class="heroImage heroImagePrevious" *ngIf="previousMovie" [src]="movieService.getImageUrl(previousMovie.backdrop_path, 'original')" alt="" />
     <div class="heroShade"></div>
-    
+
     <!-- Arrows -->
     <button type="button" class="heroArrow left" (click)="prevHero()"><app-icon name="chevron-left"></app-icon></button>
     <button type="button" class="heroArrow right" (click)="nextHero()"><app-icon name="chevron-right"></app-icon></button>
-    
+
     <!-- Restored Text & Buttons -->
     <div class="heroContent">
       <p class="eyebrow"><span></span> Featured premiere</p>
-      <h1>{{ movies[heroIndex].title }}</h1>
-      
+      <h1>{{ movieService.getTitle(movies[heroIndex]) }}</h1>
+
       <div class="meta">
-        <b>{{ movies[heroIndex].release_date.substring(0, 4) }}</b>
-        <span>Film</span>
+        <b>{{ movieService.getReleaseDate(movies[heroIndex]).substring(0, 4) }}</b>
+        <span>{{ movieService.getMediaType(movies[heroIndex]) === 'tv' ? 'TV Series' : 'Film' }}</span>
         <span class="score">⭐ {{ movies[heroIndex].vote_average.toFixed(1) }}</span>
       </div>
-      
+
       <p class="synopsis">{{ movies[heroIndex].overview }}</p>
-      
+
       <div class="actions">
-        <button type="button" class="primary" (click)="openDetails(movies[heroIndex].id)">
+        <button type="button" class="primary" (click)="openDetails({ id: movies[heroIndex].id, type: movies[heroIndex].media_type })">
           <app-icon name="play"></app-icon> View details
         </button>
+
         <button type="button" class="secondary" (click)="toggleSaved()">
           <app-icon name="plus"></app-icon> {{ saved ? 'In my list' : 'My list' }}
         </button>
       </div>
     </div>
-    
+
     <!-- Animated Dots -->
     <div class="heroDots">
-      <button *ngFor="let movie of movies; let i = index" 
-              [class.active]="heroIndex === i" 
+      <button *ngFor="let movie of movies; let i = index"
+              [class.active]="heroIndex === i"
               (click)="setHeroIndex(i)">
         <span class="progress-bar" *ngIf="heroIndex === i"></span>
       </button>

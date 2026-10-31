@@ -4,8 +4,9 @@ import { MovieCardComponent } from '../../components/movie-card/movie-card';
 import { MovieService, TMDBMovie } from '../../services/movie';
 import { OverlayStateService } from '../../services/overlay-state';
 import { IconComponent } from '../../components/icon/icon';
-import { WatchHistoryService } from '../../services/watch-history';
+import { WatchHistoryMovie, WatchHistoryService } from '../../services/watch-history';
 import { WatchlistService } from '../../services/watchlist';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-my-list',
@@ -19,8 +20,9 @@ export class MyListComponent implements OnInit {
   private changeDetector = inject(ChangeDetectorRef);
   private watchHistory = inject(WatchHistoryService);
   private watchlistService = inject(WatchlistService);
+  private router = inject(Router);
 
-  continueWatching: TMDBMovie[] = [];
+  continueWatching: WatchHistoryMovie[] = [];
   watchlist: TMDBMovie[] = [];
 
   ngOnInit() {
@@ -33,5 +35,9 @@ export class MyListComponent implements OnInit {
     const id = typeof event === 'number' ? event : event.id;
     const type = event.type || 'movie';
     this.overlayService.openDetails(id, type);
+  }
+
+  resume(movie: any) {
+    this.router.navigate(['/watch', movie.media_type || 'movie', movie.id]);
   }
 }

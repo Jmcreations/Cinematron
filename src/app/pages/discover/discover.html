@@ -28,18 +28,26 @@
 </section>
 
 <!-- Dynamic Genre Section -->
-<section class="catalog" style="position: relative; z-index: 10;">
-  <div class="sectionHead" style="position: relative; z-index: 20;">
+<section class="catalog genreCatalog">
+  <div class="sectionHead genreSectionHead">
     <div>
       <p class="kicker">Browse by genre</p>
 
-      <div style="position: relative; display: inline-block;">
-        <h2 (click)="showGenreDropdown = !showGenreDropdown" style="cursor: pointer; display: flex; align-items: center; gap: 8px; user-select: none;">
-          {{ selectedGenre.name }} <app-icon name="chevron-down" style="width: 24px; color: #640157;"></app-icon>
-        </h2>
+      <div class="genreSelector">
+        <button class="genreHeading"
+                type="button"
+                [attr.aria-expanded]="showGenreDropdown"
+                aria-haspopup="listbox"
+                (click)="showGenreDropdown = !showGenreDropdown">
+          <span>{{ selectedGenre.name }}</span>
+          <app-icon name="chevron-down"></app-icon>
+        </button>
 
-        <div class="genreDropdown" *ngIf="showGenreDropdown">
-          <button *ngFor="let genre of genres" (click)="loadGenreMovies(genre.id, genre.name); $event.stopPropagation()">
+        <div class="genreDropdown" *ngIf="showGenreDropdown" role="listbox">
+          <button type="button" *ngFor="let genre of genres"
+                  role="option"
+                  [attr.aria-selected]="selectedGenre.id === genre.id"
+                  (click)="loadGenreMovies(genre.id, genre.name); $event.stopPropagation()">
             {{ genre.name }}
           </button>
         </div>

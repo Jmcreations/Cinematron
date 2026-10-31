@@ -1,10 +1,12 @@
-<div class="pageRating">
-  <span>Your rating</span>
-  <button 
-    *ngFor="let star of stars" 
-    [class.selected]="star <= rating" 
-    (click)="setRating(star)" 
+<div class="pageRating" (mouseleave)="onMouseLeave()">
+  <button
+    *ngFor="let star of stars"
+    class="ratingStar"
+    (mousemove)="onMouseMove(star, $event)"
+    (click)="setRating(star, $event)"
     [attr.aria-label]="'Rate ' + star + ' stars'">
-    ★
+    <span class="starBase">★</span>
+    <span class="starFill" [style.width.%]="getFill(star) * 100">★</span>
   </button>
+  <output>{{ (hoverRating || rating) ? ((hoverRating || rating) | number:'1.1-1') : '0.0' }}/5</output>
 </div>

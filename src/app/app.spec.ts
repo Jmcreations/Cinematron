@@ -37,6 +37,6 @@ describe('AppComponent', () => {
     const fixture = TestBed.createComponent(AppComponent);
     await fixture.whenStable();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('.brand img')?.getAttribute('alt')).toBe('Cinematron');
+    expect(compiled.querySelector('.brand img')?.getAttribute('src')).toBe('/trlogo.png');
   });
 });

@@ -2,22 +2,26 @@
 
   <header class="watchHeader">
     <div class="headerLeft">
-      <a class="brand" href="/" aria-label="Cinematron Home">
-        <img class="brand-image" src="/trlogo.png" alt=""><span>Cinematron</span>
+      <a href="/" aria-label="Cinematron Home" class="brand">
+        <img src="/trlogo.png" alt="" class="brand-image"><span>Cinematron</span>
       </a>
       <button class="back" (click)="goBack()">← Back to details</button>
     </div>
     <button class="profileBtn"><app-icon name="user"></app-icon> Profile</button>
   </header>
 
-  <div class="player">
-    <iframe *ngIf="isPlaying && videoUrl" [src]="videoUrl" referrerpolicy="origin" width="100%" height="100%" frameborder="0" allowfullscreen allow="autoplay; encrypted-media; fullscreen" style="position: absolute; inset: 0; z-index: 5;"></iframe>
+  <div class="player" #player>
+    <iframe #videoFrame *ngIf="isPlaying && videoUrl" [src]="videoUrl" (load)="onPlayerLoaded()" referrerpolicy="origin" width="100%" height="100%" frameborder="0" allowfullscreen allow="autoplay; encrypted-media; fullscreen; picture-in-picture" style="position: absolute; inset: 0; z-index: 5;"></iframe>
+    <button class="fullscreenButton" *ngIf="isPlaying && videoUrl" type="button" (click)="toggleFullscreen()" aria-label="Toggle fullscreen">
+      <app-icon name="maximize"></app-icon>
+      <span>Fullscreen</span>
+    </button>
 
     <ng-container *ngIf="!isPlaying">
       <img [src]="movieService.getImageUrl(media.backdrop_path, 'original')" [alt]="media.name || media.title" />
       <div class="playerShade"></div>
 
-      <div class="bigPlay" (click)="playContent(1)" *ngIf="videoUrl">
+      <div class="bigPlay" (click)="playContent(1)">
         <app-icon name="play"></app-icon>
       </div>
 
@@ -36,14 +40,27 @@
   </div>
 
   <!-- Server Switcher Block -->
-  <div class="serverSwitcher" *ngIf="isPlaying">
-    <span>Streaming Server:</span>
-    <button *ngFor="let server of servers; let i = index"
-            [class.active]="activeServerIndex === i"
-            (click)="setServer(i)">
-      {{ server.name }}
-    </button>
+  <div class="playerFooter" *ngIf="isPlaying">
+    <div class="serverSwitcher">
+      <span>Server:</span>
+      <button *ngFor="let server of servers; let i = index"
+              [class.active]="activeServerIndex === i"
+              (click)="setServer(i)">
+        {{ server.name }}
+      </button>
+    </div>
+    <div class="episodeNav" *ngIf="mediaType === 'tv'">
+      <label class="autoPlayToggle">
+        <input type="checkbox" [checked]="autoPlayNext" (change)="autoPlayNext = !autoPlayNext">
+        <span>Auto-play next</span>
+      </label>
+      <button class="epNavBtn" [disabled]="!hasPrevEpisode" (click)="prevEpisode()">Prev</button>
+      <button class="epNavBtn" [disabled]="!hasNextEpisode" (click)="nextEpisode()">Next</button>
+    </div>
   </div>
+  <p class="playbackStatus" *ngIf="episodeChangePending" role="status" aria-live="polite">
+    Loading season {{ activeSeason }}, episode {{ activeEpisode }} in the player...
+  </p>
 
   <div class="watchContent">
     <!-- Episodes Section (Only visible for TV Shows) -->
@@ -55,7 +72,6 @@
         </div>
         <div class="headerTools">
           <div class="ratingWrapper">
-            <span style="color:#514c50; font-size:10px; letter-spacing:0.1em; text-transform:uppercase;">Your Rating</span>
             <app-star-rating [rating]="userRating" (ratingChange)="userRating = $event"></app-star-rating>
           </div>
           <div class="seasonToggle">
@@ -69,7 +85,10 @@
       </div>
 
       <div class="episodeGrid">
-        <div class="episodeCard" *ngFor="let ep of episodes" (click)="playContent(ep.episode_number)">
+        <button class="episodeCard" *ngFor="let ep of episodes"
+                [class.active]="activeEpisode === ep.episode_number"
+                [attr.aria-label]="'Play episode ' + ep.episode_number + ': ' + ep.name"
+                (click)="playContent(ep.episode_number)">
           <div class="epThumb">
             <img [src]="ep.still_path ? movieService.getImageUrl(ep.still_path, 'w300') : movieService.getImageUrl(media.backdrop_path, 'w300')" [alt]="ep.name" />
             <app-icon name="play"></app-icon>
@@ -79,7 +98,7 @@
             <h3>{{ ep.name }}</h3>
             <p class="epDesc">{{ ep.overview || 'No synopsis available for this episode.' }}</p>
           </div>
-        </div>
+        </button>
       </div>
     </section>
 

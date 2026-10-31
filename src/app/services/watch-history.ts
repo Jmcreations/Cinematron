@@ -4,11 +4,18 @@ import { TMDBMovie } from './movie';
 
 const STORAGE_KEY = 'cinematron.continue-watching';
 
+export type WatchHistoryMovie = TMDBMovie & {
+  media_type: 'movie' | 'tv';
+  watchSeason?: number;
+  watchEpisode?: number;
+  watchedAt?: number;
+};
+
 @Injectable({ providedIn: 'root' })
 export class WatchHistoryService {
   private platformId = inject(PLATFORM_ID);
 
-  getMovies(): TMDBMovie[] {
+  getMovies(): WatchHistoryMovie[] {
     if (!isPlatformBrowser(this.platformId)) {
       return [];
     }
@@ -23,13 +30,16 @@ export class WatchHistoryService {
     }
   }
 
-  addMovie(movie: TMDBMovie): void {
+  addMovie(movie: WatchHistoryMovie): void {
     if (!isPlatformBrowser(this.platformId)) {
       return;
     }
 
     try {
-      const movies = [movie, ...this.getMovies().filter(item => item.id !== movie.id)].slice(0, 10);
+      const movies = [
+        { ...movie, watchedAt: Date.now() },
+        ...this.getMovies().filter(item => item.id !== movie.id)
+      ].slice(0, 10);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(movies));
     } catch (error) {
       console.error('Unable to save watch history', error);

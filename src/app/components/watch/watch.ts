@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild, inject } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
@@ -7,6 +7,7 @@ import { MovieCardComponent } from '../../components/movie-card/movie-card';
 import { IconComponent } from '../../components/icon/icon';
 import { StarRatingComponent } from '../../components/star-rating/star-rating';
 import { OverlayStateService } from '../../services/overlay-state';
+import { WatchHistoryService } from '../../services/watch-history';
 import { catchError, of, switchMap, timeout } from 'rxjs';
 
 @Component({
@@ -24,6 +25,9 @@ export class WatchComponent implements OnInit {
   overlayService = inject(OverlayStateService);
   sanitizer = inject(DomSanitizer);
   changeDetector = inject(ChangeDetectorRef);
+  watchHistory = inject(WatchHistoryService);
+  @ViewChild('player') playerElement?: ElementRef<HTMLElement>;
+  @ViewChild('videoFrame') videoFrame?: ElementRef<HTMLIFrameElement>;
 
   mediaType: 'movie' | 'tv' = 'movie';
   media: any = null;
@@ -37,6 +41,7 @@ export class WatchComponent implements OnInit {
 
   activeServerIndex = 0;
   isPlaying = false;
+  episodeChangePending = false;
   loading = true;
   loadError = false;
   userRating = 0;
@@ -99,11 +104,17 @@ export class WatchComponent implements OnInit {
 
       this.media = data;
       this.isPlaying = false;
-      this.activeEpisode = 1;
+      const historyEntry = this.watchHistory.getMovies().find(item => item.id === data.id);
+      this.activeSeason = historyEntry?.watchSeason || 1;
+      this.activeEpisode = historyEntry?.watchEpisode || 1;
 
       if (this.mediaType === 'tv') {
         this.seasons = data.seasons?.filter((s: any) => s.season_number > 0) || [];
-        if (this.seasons.length > 0) this.loadSeason(this.seasons[0].season_number);
+        const season = this.seasons.find(item => item.season_number === this.activeSeason) || this.seasons[0];
+        if (season) {
+          this.activeSeason = season.season_number;
+          this.loadSeason(season.season_number);
+        }
       }
 
       if (this.media.genres?.length) {
@@ -140,7 +151,36 @@ export class WatchComponent implements OnInit {
   playContent(episodeNumber = 1) {
     this.activeEpisode = episodeNumber;
     this.isPlaying = true;
+    this.episodeChangePending = this.mediaType === 'tv';
+    this.watchHistory.addMovie({
+      ...this.media,
+      media_type: this.mediaType,
+      watchSeason: this.mediaType === 'tv' ? this.activeSeason : undefined,
+      watchEpisode: this.mediaType === 'tv' ? this.activeEpisode : undefined
+    });
     this.updateVideoUrl();
+    setTimeout(() => {
+      this.playerElement?.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  }
+
+  onPlayerLoaded() {
+    this.episodeChangePending = false;
+    this.changeDetector.markForCheck();
+  }
+
+  toggleFullscreen() {
+    const frame = this.videoFrame?.nativeElement;
+    const player = this.playerElement?.nativeElement;
+    if (!frame || !player) return;
+
+    if (document.fullscreenElement) {
+      document.exitFullscreen().catch(error => console.error('Unable to exit fullscreen', error));
+      return;
+    }
+
+    (frame.requestFullscreen?.() || player.requestFullscreen?.())
+      ?.catch(error => console.error('Unable to enter fullscreen', error));
   }
 
   setServer(index: number) {
@@ -153,5 +193,23 @@ export class WatchComponent implements OnInit {
     const id = typeof event === 'number' ? event : event.id;
     const type = event.type || 'movie';
     this.overlayService.openDetails(id, type);
+  }
+
+  autoPlayNext = true;
+
+  get hasNextEpisode(): boolean {
+    return this.mediaType === 'tv' && this.activeEpisode < this.episodes.length;
+  }
+
+  get hasPrevEpisode(): boolean {
+    return this.mediaType === 'tv' && this.activeEpisode > 1;
+  }
+
+  nextEpisode() {
+    if (this.hasNextEpisode) this.playContent(this.activeEpisode + 1);
+  }
+
+  prevEpisode() {
+    if (this.hasPrevEpisode) this.playContent(this.activeEpisode - 1);
   }
 }

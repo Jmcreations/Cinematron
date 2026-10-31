@@ -3,31 +3,31 @@
   <button class="close" (click)="closeDetails()" aria-label="Close" *ngIf="loading || loadError">
     <app-icon name="close"></app-icon>
   </button>
-  
+
   <div class="detail" *ngIf="movie">
     <button class="close" (click)="closeDetails()" aria-label="Close">
       <app-icon name="close"></app-icon>
     </button>
-    
+
     <!-- Left Side: Poster -->
     <div class="detailPoster">
       <img [src]="movieService.getImageUrl(movie.poster_path, 'w780')" [alt]="movieService.getTitle(movie)" />
     </div>
-    
+
     <!-- Right Side: Details & Actions -->
     <div class="detailCopy">
       <p class="kicker">{{ movie.tagline || 'A Cinematic Experience' }}</p>
       <h2>{{ movieService.getTitle(movie) }}</h2>
-      
+
       <div class="meta">
         <b>{{ movieService.getReleaseDate(movie).substring(0, 4) }}</b>
         <span>{{ mediaType === 'tv' ? (movie.episode_run_time?.[0] || 0) : (movie.runtime || 0) }}m</span>
         <span>⭐ {{ movie.vote_average.toFixed(1) }}</span>
         <span *ngFor="let genre of movie.genres | slice:0:2">{{ genre.name }}</span>
       </div>
-      
+
       <p class="detailSynopsis">{{ movie.overview }}</p>
-      
+
       <div class="cast" *ngIf="cast.length">
         <div class="castMember" *ngFor="let person of cast">
           <img [src]="person.profile_path ? movieService.getImageUrl(person.profile_path, 'w185') : 'assets/placeholder.jpg'" [alt]="person.name" />
@@ -37,22 +37,21 @@
           </div>
         </div>
       </div>
-      
+
       <div class="rating">
-        <p>Rate this {{ mediaType === 'tv' ? 'series' : 'film' }}</p>
         <app-star-rating [rating]="userRating" (ratingChange)="userRating = $event"></app-star-rating>
       </div>
-      
+
       <!-- Stacking the buttons neatly at the bottom -->
       <div class="actions-stack">
         <button class="watchNow full" (click)="openTrailer()" *ngIf="trailerUrl">
           <app-icon name="play"></app-icon> Watch trailer
         </button>
-        
+
         <button class="primary full" (click)="watchMovie()">
           <app-icon name="play"></app-icon> Watch now
         </button>
-        
+
         <button class="secondary full" (click)="toggleSaved()">
           <app-icon name="plus"></app-icon> {{ saved ? 'Added to your watchlist' : 'Add to watchlist' }}
         </button>

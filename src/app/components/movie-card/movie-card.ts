@@ -14,8 +14,8 @@ export class MovieCardComponent {
   @Input({ required: true }) movie!: TMDBMovie;
   @Input() rank?: number;
   @Input() showRemove = false;
-  
-  @Output() cardClick = new EventEmitter<number>();
-  
+  @Output() cardClick = new EventEmitter<{id: number, type: 'movie' | 'tv'}>();
+
+
   movieService = inject(MovieService);
 }

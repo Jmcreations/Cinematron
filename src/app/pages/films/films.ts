@@ -15,10 +15,10 @@ export class FilmsComponent implements OnInit {
   movieService = inject(MovieService);
   overlayService = inject(OverlayStateService);
   private changeDetector = inject(ChangeDetectorRef);
-  
+
   trending: TMDBMovie[] = [];
   scifi: TMDBMovie[] = [];
-  
+
   genres = ['All films', 'Drama', 'Science Fiction', 'Thriller', 'Documentary'];
   activeGenre = 'All films';
   movies: TMDBMovie[] = [];
@@ -40,7 +40,9 @@ export class FilmsComponent implements OnInit {
     });
   }
 
-  openDetails(id: number) {
-    this.overlayService.openDetails(id);
+  openDetails(event: any) {
+    const id = typeof event === 'number' ? event : event.id;
+    const type = event.type || 'movie';
+    this.overlayService.openDetails(id, type);
   }
 }

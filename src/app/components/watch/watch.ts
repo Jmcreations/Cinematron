@@ -149,5 +149,9 @@ export class WatchComponent implements OnInit {
   }
 
   goBack() { this.location.back(); }
-  openDetails(id: number) { this.overlayService.openDetails(id); }
+  openDetails(event: any) {
+    const id = typeof event === 'number' ? event : event.id;
+    const type = event.type || 'movie';
+    this.overlayService.openDetails(id, type);
+  }
 }

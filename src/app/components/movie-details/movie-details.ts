@@ -3,20 +3,23 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { MovieService } from '../../services/movie';
-import { OverlayStateService } from '../../services/overlay-state';
+import { OverlayStateService, MediaSelection } from '../../services/overlay-state';
 import { WatchlistService } from '../../services/watchlist';
 import { IconComponent } from '../icon/icon';
 import { StarRatingComponent } from '../star-rating/star-rating';
 import { catchError, filter, of, switchMap, timeout } from 'rxjs';
 
-export interface MovieDetails {
+export interface MediaDetails {
   id: number;
-  title: string;
+  title?: string;
+  name?: string;
   tagline: string;
   poster_path: string;
   backdrop_path: string;
-  release_date: string;
-  runtime: number;
+  release_date?: string;
+  first_air_date?: string;
+  runtime?: number;
+  episode_run_time?: number[];
   overview: string;
   vote_average: number;
   genres: { name: string }[];
@@ -35,10 +38,12 @@ export class MovieDetailsComponent implements OnInit {
   router = inject(Router);
   private changeDetector = inject(ChangeDetectorRef);
   private watchlistService = inject(WatchlistService);
-  
-  movie: MovieDetails | null = null;
+
+  movie: MediaDetails | null = null;
+  mediaType: 'movie' | 'tv' = 'movie'; // Track if it's a TV show or Movie
   cast: any[] = [];
   trailerUrl: SafeResourceUrl | null = null;
+
   showTrailerModal = false;
   loading = false;
   loadError = false;
@@ -47,20 +52,27 @@ export class MovieDetailsComponent implements OnInit {
   userRating = 0;
 
   ngOnInit() {
-    this.overlayService.selectedMovieId$.pipe(
-      filter((id): id is number => id !== null),
-      switchMap(id => {
+    this.overlayService.selectedMedia$.pipe(
+      filter((media): media is MediaSelection => media !== null),
+      switchMap(media => {
         this.visible = true;
         this.movie = null;
         this.cast = [];
         this.trailerUrl = null;
         this.loading = true;
         this.loadError = false;
+        this.mediaType = media.type; // Save the type for routing
         this.changeDetector.markForCheck();
-        return this.movieService.getMovieDetails(id).pipe(
+
+        // Fetch dynamically based on media type
+        const fetchRequest$ = this.mediaType === 'tv'
+          ? this.movieService.getTvDetails(media.id)
+          : this.movieService.getMovieDetails(media.id);
+
+        return fetchRequest$.pipe(
           timeout(10000),
           catchError(error => {
-            console.error('Unable to load movie details', error);
+            console.error('Unable to load media details', error);
             this.loadError = true;
             return of(null);
           })
@@ -88,19 +100,15 @@ export class MovieDetailsComponent implements OnInit {
     });
   }
 
-  openTrailer() {
-    this.showTrailerModal = true;
-  }
-
-  closeTrailer() {
-    this.showTrailerModal = false;
-  }
+  openTrailer() { this.showTrailerModal = true; }
+  closeTrailer() { this.showTrailerModal = false; }
 
   watchMovie() {
     if (this.movie) {
-      const movieId = this.movie.id;
+      const mediaId = this.movie.id;
       this.closeDetails();
-      this.router.navigate(['/watch', 'movie', movieId]);
+      // Pass the dynamic mediaType to the Watch component route
+      this.router.navigate(['/watch', this.mediaType, mediaId]);
     }
   }
 
@@ -114,7 +122,7 @@ export class MovieDetailsComponent implements OnInit {
 
   toggleSaved() {
     if (this.movie) {
-      this.saved = this.watchlistService.toggleMovie(this.movie);
+      this.saved = this.watchlistService.toggleMovie(this.movie as any);
     }
   }
 }

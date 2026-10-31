@@ -15,12 +15,12 @@ export class HeroComponent implements OnInit, OnDestroy {
   movieService = inject(MovieService);
   platformId = inject(PLATFORM_ID);
   private changeDetector = inject(ChangeDetectorRef);
-  
+
   movies: TMDBMovie[] = [];
   heroIndex = 0;
   previousMovie: TMDBMovie | null = null;
   saved = false;
-  
+
   private timer: any;
   private transitionTimer: any;
   private swipeResetTimer: any;
@@ -150,12 +150,10 @@ export class HeroComponent implements OnInit, OnDestroy {
     }, 700);
   }
 
-  openDetails(id: number) {
-    if (this.consumeSwipeClick()) {
-      return;
-    }
-    this.clearTimer();
-    this.overlayService.openDetails(id);
+  openDetails(event: any) {
+    const id = typeof event === 'number' ? event : event.id;
+    const type = event.type || 'movie';
+    this.overlayService.openDetails(id, type);
   }
 
   toggleSaved() {

@@ -20,7 +20,7 @@
       <h2>{{ movie.title }}</h2>
       
       <div class="meta">
-        <b>{{ movie.release_date.substring(0, 4) }}</b>
+        <b>{{ movie.release_date?.substring(0, 4) || '' }}</b>
         <span>{{ movie.runtime }}m</span>
         <span>⭐ {{ movie.vote_average.toFixed(1) }}</span>
         <span *ngFor="let genre of movie.genres | slice:0:2">{{ genre.name }}</span>

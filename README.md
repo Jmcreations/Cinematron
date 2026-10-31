@@ -4,14 +4,16 @@ This project was generated using [Angular CLI](https://github.com/angular/angula
 
 ## Development server
 
-Create a local `.env` file from `.env.example` and set your local TMDB API key:
+Create a local `.env` file from `.env.example` and set your local TMDB API Read
+Access Token:
 
 ```bash
 cp .env.example .env
 ```
 
-Edit `.env` and replace `replace_with_your_tmdb_api_key` with a key from
-your TMDB account. The `.env` file is ignored by Git. Never copy real
+Edit `.env` and replace `replace_with_your_tmdb_read_access_token` with the
+API Read Access Token from your TMDB account. The `.env` file is ignored by
+Git. Never copy real
 credentials into `.env.example`; it is a safe template intended to be committed.
 
 To start a local development server, run:
@@ -113,7 +115,7 @@ and run `npm run migrate` deliberately.
 
 ## Production checklist
 
-- Add `TMDB_API_KEY`, `POSTGRES_URL` (or `DATABASE_URL`), and `CORS_ORIGINS` to
+- Add `TMDB_READ_ACCESS_TOKEN`, `POSTGRES_URL` (or `DATABASE_URL`), and `CORS_ORIGINS` to
   Vercel Project Settings → Environment Variables. Use the Production,
   Preview, and Development scopes intentionally.
 - Configure a Vercel Postgres database before launch; the deployed API does not

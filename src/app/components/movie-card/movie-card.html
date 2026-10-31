@@ -1,5 +1,6 @@
 <!-- movie-card.component.html -->
-<button class="movie" (click)="cardClick.emit(movie.id)">
+<!-- Update the opening button tag -->
+<button class="movie" (click)="cardClick.emit({ id: movie.id, type: movie.media_type || 'movie' })">
   <div class="poster">
     <img [src]="movieService.getImageUrl(movie.poster_path)" [alt]="movie.title" />
     <b class="rank" *ngIf="rank">{{ rank }}</b>
@@ -7,5 +8,5 @@
     <span class="savedMark" *ngIf="showRemove"><app-icon name="close"></app-icon></span>
   </div>
   <h3>{{ movie.title }}</h3>
-  <p>{{ movie.release_date.substring(0, 4) }}</p>
+  <p>{{ (movie.release_date || movie.first_air_date)?.substring(0, 4) || '' }}</p>
 </button>

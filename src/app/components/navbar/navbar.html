@@ -25,7 +25,7 @@
         <img *ngIf="result.poster_path" [src]="movieService.getImageUrl(result.poster_path, 'w92')" style="width: 32px; height: 48px; border-radius: 4px; object-fit: cover;" />
         <div style="display: flex; flex-direction: column; text-align: left;">
           {{ result.title }}
-          <span>({{ result.release_date.substring(0, 4) }})</span>
+          <span>({{ (result.release_date || result.first_air_date)?.substring(0, 4) || '' }})</span>
         </div>
       </div>
     </button>

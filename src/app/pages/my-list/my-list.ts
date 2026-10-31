@@ -19,7 +19,7 @@ export class MyListComponent implements OnInit {
   private changeDetector = inject(ChangeDetectorRef);
   private watchHistory = inject(WatchHistoryService);
   private watchlistService = inject(WatchlistService);
-  
+
   continueWatching: TMDBMovie[] = [];
   watchlist: TMDBMovie[] = [];
 
@@ -29,7 +29,9 @@ export class MyListComponent implements OnInit {
     this.changeDetector.markForCheck();
   }
 
-  openDetails(id: number) {
-    this.overlayService.openDetails(id);
+  openDetails(event: any) {
+    const id = typeof event === 'number' ? event : event.id;
+    const type = event.type || 'movie';
+    this.overlayService.openDetails(id, type);
   }
 }

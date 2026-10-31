@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
 import httpx
 from dotenv import load_dotenv
@@ -21,6 +22,22 @@ if os.getenv("VERCEL") and not configured_database_url:
         "DATABASE_URL or POSTGRES_URL must be configured for Vercel deployments."
     )
 SQLALCHEMY_DATABASE_URL = configured_database_url or default_database_url
+
+if SQLALCHEMY_DATABASE_URL.startswith(("postgres://", "postgresql://")):
+    database_parts = urlsplit(SQLALCHEMY_DATABASE_URL)
+    database_query = [
+        (key, value)
+        for key, value in parse_qsl(database_parts.query, keep_blank_values=True)
+        if key != "supa"
+    ]
+    SQLALCHEMY_DATABASE_URL = urlunsplit((
+        database_parts.scheme,
+        database_parts.netloc,
+        database_parts.path,
+        urlencode(database_query),
+        database_parts.fragment,
+    ))
+
 if SQLALCHEMY_DATABASE_URL.startswith("postgres://"):
     SQLALCHEMY_DATABASE_URL = SQLALCHEMY_DATABASE_URL.replace("postgres://", "postgresql+psycopg://", 1)
 elif SQLALCHEMY_DATABASE_URL.startswith("postgresql://"):
@@ -98,19 +115,21 @@ def read_root():
 
 
 async def proxy_tmdb_request(tmdb_path: str, request: Request):
-    api_key = os.getenv("TMDB_API_KEY")
-    if not api_key:
-        raise HTTPException(status_code=500, detail="TMDB_API_KEY is not configured")
+    access_token = os.getenv("TMDB_READ_ACCESS_TOKEN")
+    if not access_token:
+        raise HTTPException(
+            status_code=500,
+            detail="TMDB_READ_ACCESS_TOKEN is not configured",
+        )
     if not tmdb_path.startswith("3/"):
         raise HTTPException(status_code=404, detail="Unsupported TMDB API path")
 
-    params = dict(request.query_params)
-    params["api_key"] = api_key
     try:
         async with httpx.AsyncClient(timeout=15) as client:
             response = await client.get(
                 f"https://api.themoviedb.org/{tmdb_path}",
-                params=params,
+                params=dict(request.query_params),
+                headers={"Authorization": f"Bearer {access_token}"},
             )
     except httpx.HTTPError as error:
         raise HTTPException(status_code=502, detail="TMDB request failed") from error

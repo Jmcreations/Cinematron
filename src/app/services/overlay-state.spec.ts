@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { OverlayState } from './overlay-state';
+import { OverlayStateService } from './overlay-state';
 
-describe('OverlayState', () => {
-  let service: OverlayState;
+describe('OverlayStateService', () => {
+  let service: OverlayStateService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(OverlayState);
+    service = TestBed.inject(OverlayStateService);
   });
 
   it('should be created', () => {

@@ -44,14 +44,29 @@ export class WatchComponent implements OnInit {
   // Unified Server Config
   servers = [
     {
-      name: 'VidSrc (Main)',
-      getMovieUrl: (id: number) => `https://vidsrc.me/embed/movie?tmdb=${id}`,
-      getTvUrl: (id: number, s: number, e: number) => `https://vidsrc.me/embed/tv?tmdb=${id}&season=${s}&episode=${e}`
+      name: 'VidSrc',
+      getMovieUrl: (tmdb_id: number) => `https://vidsrc.me/embed/movie?tmdb=${tmdb_id}`,
+      getTvUrl: (tmdb_id: number, s: number, e: number) => `https://vidsrc.me/embed/tv?tmdb=${tmdb_id}&season=${s}&episode=${e}`
     },
     {
-      name: 'VidLink (Alt 1)',
-      getMovieUrl: (id: number) => `https://vidlink.pro/movie/${id}`,
-      getTvUrl: (id: number, s: number, e: number) => `https://vidlink.pro/tv/${id}/${s}/${e}`
+      name: 'VidCore',
+      getMovieUrl: (tmdb_id: number) => `https://vidcore.org/embed/movie/${tmdb_id}`,
+      getTvUrl: (tmdb_id: number, season: number, episode: number) => `https://vidcore.org/embed/tv/${tmdb_id}/${season}/${episode}`
+    },
+    {
+      name: 'Vidlink',
+      getMovieUrl: (tmdb_id: number) => `https://vidlink.pro/movie/${tmdb_id}`,
+      getTvUrl: (tmdb_id: number, season: number, episode: number) => `https://vidlink.pro/tv/${tmdb_id}/${season}/${episode}`
+    },
+    {
+      name: 'Vidstreams',
+      getMovieUrl: (tmdb_id: number) => `https://vidstreams.net/embed/${tmdb_id}`,
+      getTvUrl: (tmdb_id: number, season: number, episode: number) => `https://vidstreams.net/embed/tv/${tmdb_id}/${season}/${episode}`
+    },
+    {
+      name: 'VixSrc',
+      getMovieUrl: (tmdb_id: number) => `https://vixsrc.to/movie/${tmdb_id}`,
+      getTvUrl: (tmdb_id: number, season: number, episode: number) => `https://vixsrc.to/tv/${tmdb_id}/${season}/${episode}`
     }
   ];
 
@@ -59,16 +74,16 @@ export class WatchComponent implements OnInit {
     this.route.paramMap.pipe(
       switchMap(params => {
         const type = (params.get('type') || 'movie') as 'movie' | 'tv';
-        const id = Number(params.get('id'));
-        if (!id) return of(null);
+        const tmdb_id = Number(params.get('tmdb_id') || params.get('id'));
+        if (!tmdb_id) return of(null);
 
         this.mediaType = type;
         this.loading = true;
         this.changeDetector.markForCheck();
 
         const fetchRequest$ = this.mediaType === 'tv'
-          ? this.movieService.getTvDetails(id)
-          : this.movieService.getMovieDetails(id);
+          ? this.movieService.getTvDetails(tmdb_id)
+          : this.movieService.getMovieDetails(tmdb_id);
 
         return fetchRequest$.pipe(
           timeout(15000),

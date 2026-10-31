@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { map, Observable } from 'rxjs';
+import { catchError, map, Observable, of } from 'rxjs';
 
 export interface TMDBMovie {
   id: number;
@@ -21,7 +21,13 @@ export class MovieService {
 
   getTrendingMovies(): Observable<TMDBMovie[]> {
     return this.http.get<any>(`${this.baseUrl}/trending/movie/week`)
-      .pipe(map(response => response.results));
+      .pipe(
+        map(response => response.results),
+        catchError(error => {
+          console.error('Unable to load trending movies', error);
+          return of([]);
+        })
+      );
   }
 
   getImageUrl(path: string, width: string = 'w500'): string {
@@ -30,11 +36,17 @@ export class MovieService {
 
   getNowPlayingMovies(): Observable<TMDBMovie[]> {
     return this.http.get<any>(`${this.baseUrl}/movie/now_playing`)
-    .pipe(map(res => res.results));
+    .pipe(
+      map(res => res.results),
+      catchError(error => {
+        console.error('Unable to load now-playing movies', error);
+        return of([]);
+      })
+    );
   }
-  getMovieDetails(id: number): Observable<any> {
+  getMovieDetails(tmdb_id: number): Observable<any> {
   // Fetches core details, cast, and video links simultaneously
-    return this.http.get<any>(`${this.baseUrl}/movie/${id}?append_to_response=credits,videos`);}
+    return this.http.get<any>(`${this.baseUrl}/movie/${tmdb_id}?append_to_response=credits,videos`);}
 
   getGenres(): Observable<any[]> {
     return this.http.get<any>(`${this.baseUrl}/genre/movie/list`)
@@ -49,11 +61,11 @@ export class MovieService {
     .pipe(map(res => res.results));
   }
 
-  getTvDetails(id: number): Observable<any> {
-    return this.http.get<any>(`${this.baseUrl}/tv/${id}?append_to_response=credits,videos,external_ids`);
+  getTvDetails(tmdb_id: number): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/tv/${tmdb_id}?append_to_response=credits,videos,external_ids`);
   }
 
-  getTvSeason(seriesId: number, seasonNumber: number): Observable<any> {
-    return this.http.get<any>(`${this.baseUrl}/tv/${seriesId}/season/${seasonNumber}`);
+  getTvSeason(tmdb_id: number, seasonNumber: number): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/tv/${tmdb_id}/season/${seasonNumber}`);
   }
 }

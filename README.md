@@ -4,14 +4,15 @@ This project was generated using [Angular CLI](https://github.com/angular/angula
 
 ## Development server
 
-Create a local `.env` file from `.env.example` and set your local secrets:
+Create a local `.env` file from `.env.example` and set your local TMDB API key:
 
 ```bash
 cp .env.example .env
 ```
 
-The `.env` file is ignored by Git. Never copy real credentials into
-`.env.example`; it is a safe template intended to be committed.
+Edit `.env` and replace `replace_with_your_tmdb_api_key` with a key from
+your TMDB account. The `.env` file is ignored by Git. Never copy real
+credentials into `.env.example`; it is a safe template intended to be committed.
 
 To start a local development server, run:
 
@@ -22,6 +23,10 @@ npm start
 Once the server is running, open your browser and navigate to
 `http://localhost:4200/`. `npm start` launches both Angular and the local
 Python API; you do not need to start a second backend terminal.
+
+If port 4200 is already in use, stop the existing Angular dev server before
+running `npm start` again. Starting a second copy causes the combined command
+to stop both processes.
 
 The development server proxies API requests to the SSR server. Start the SSR
 server in a second terminal after building:
@@ -91,11 +96,28 @@ After creating a Vercel Postgres integration, add its connection string to the
 Vercel project as `POSTGRES_URL` or `DATABASE_URL`; the backend supports either
 name and automatically selects PostgreSQL.
 
+For the Vercel Postgres setup:
+
+1. In the Vercel project, open **Storage** and create or connect a Postgres
+   database.
+2. Link it to the project and enable the Production, Preview, and Development
+   environments as needed.
+3. Confirm that Vercel provides `POSTGRES_URL` (or add the equivalent
+   `DATABASE_URL`) under **Settings → Environment Variables**.
+4. Redeploy. The API runs the Alembic migrations during initialization and will
+   refuse to start if neither database variable is configured.
+
+Do not copy the hosted connection string into a committed file. For local
+testing against the hosted database, place it only in the ignored `.env` file
+and run `npm run migrate` deliberately.
+
 ## Production checklist
 
 - Add `TMDB_API_KEY`, `POSTGRES_URL` (or `DATABASE_URL`), and `CORS_ORIGINS` to
   Vercel Project Settings → Environment Variables. Use the Production,
   Preview, and Development scopes intentionally.
+- Configure a Vercel Postgres database before launch; the deployed API does not
+  fall back to temporary SQLite storage.
 - Redeploy after changing Vercel environment variables. Local changes do not
   update Vercel until the connected branch is pushed and a deployment
   completes.
@@ -106,6 +128,8 @@ name and automatically selects PostgreSQL.
   token validation and signed, expiring sessions before enabling real accounts.
 - Move user identity from the temporary `user_id=1` defaults to authenticated
   request context.
+- Connect the frontend watchlist and ratings actions to authenticated API
+  endpoints instead of browser-only storage.
 - Replace third-party streaming embeds with a licensed provider if reliable
   playback controls, ad control, and production rights are required.
 - Add rate limiting, structured error logging, health checks, and automated

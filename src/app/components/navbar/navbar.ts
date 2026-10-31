@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { Subject, debounceTime, distinctUntilChanged, switchMap, of } from 'rxjs';
 import { OverlayStateService } from '../../services/overlay-state';
 import { MovieService, TMDBMovie } from '../../services/movie';
@@ -9,18 +9,19 @@ import { IconComponent } from '../icon/icon';
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [CommonModule, RouterModule, IconComponent],
+  imports: [CommonModule, RouterModule, IconComponent,],
   templateUrl: './navbar.html'
 })
 export class NavbarComponent {
   overlayService = inject(OverlayStateService);
   movieService = inject(MovieService);
   private changeDetector = inject(ChangeDetectorRef);
+  router = inject(Router);
 
   setAuth(isOpen: boolean) {
     this.overlayService.setAuthOpen(isOpen);
   }
-  
+
   searchResults: TMDBMovie[] = [];
   private searchSubject = new Subject<string>();
 
@@ -43,4 +44,12 @@ export class NavbarComponent {
     this.overlayService.openDetails(id);
     this.searchResults = []; // Clear dropdown
   }
+
+  submitSearch(event: Event) {
+  const query = (event.target as HTMLInputElement).value;
+  if (query.trim()) {
+    this.searchResults = []; // Close dropdown
+    this.router.navigate(['/search'], { queryParams: { q: query } });
+  }
+}
 }

@@ -4,12 +4,12 @@
   "scripts": {
     "ng": "ng",
     "start": "concurrently --kill-others-on-fail \"npm run start:api\" \"ng serve --proxy-config proxy.conf.json\"",
-    "start:api": "node scripts/start-api.mjs",
+    "start:api": "node --env-file-if-exists=.env scripts/start-api.mjs",
     "migrate": "node scripts/run-migrations.mjs",
-    "build": "node --env-file=.env node_modules/@angular/cli/bin/ng build",
+    "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "serve:ssr:Cinematron": "node --env-file=.env dist/Cinematron/server/server.mjs"
+    "serve:ssr:Cinematron": "node --env-file-if-exists=.env dist/Cinematron/server/server.mjs"
   },
   "private": true,
   "packageManager": "npm@11.13.0",

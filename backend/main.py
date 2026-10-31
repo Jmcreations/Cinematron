@@ -11,13 +11,16 @@ from pydantic import BaseModel
 
 load_dotenv(Path(__file__).resolve().parents[1] / ".env")
 
-# 1. Database Setup (SQLite for local development)
+# 1. Database Setup
 default_database_url = (
-    "sqlite:////tmp/cinematron.db"
-    if os.getenv("VERCEL")
-    else "sqlite:///./cinematron.db"
+    "sqlite:///./cinematron.db"
 )
-SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL") or os.getenv("POSTGRES_URL") or default_database_url
+configured_database_url = os.getenv("DATABASE_URL") or os.getenv("POSTGRES_URL")
+if os.getenv("VERCEL") and not configured_database_url:
+    raise RuntimeError(
+        "DATABASE_URL or POSTGRES_URL must be configured for Vercel deployments."
+    )
+SQLALCHEMY_DATABASE_URL = configured_database_url or default_database_url
 if SQLALCHEMY_DATABASE_URL.startswith("postgres://"):
     SQLALCHEMY_DATABASE_URL = SQLALCHEMY_DATABASE_URL.replace("postgres://", "postgresql+psycopg://", 1)
 elif SQLALCHEMY_DATABASE_URL.startswith("postgresql://"):

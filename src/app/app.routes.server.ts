@@ -10,7 +10,7 @@ export const serverRoutes: ServerRoute[] = [
     renderMode: RenderMode.Client
   },
   {
-    path: 'watch/:type/:id',
+    path: 'watch/:type/:tmdb_id',
     renderMode: RenderMode.Client
   },
   {

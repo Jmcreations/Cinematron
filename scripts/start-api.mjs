@@ -12,6 +12,14 @@ if (!python) {
   process.exit(1);
 }
 
+const tmdbApiKey = process.env.TMDB_API_KEY?.trim();
+if (!tmdbApiKey || tmdbApiKey === 'replace_with_your_tmdb_api_key') {
+  console.error(
+    'TMDB_API_KEY is missing. Copy .env.example to .env and set TMDB_API_KEY before starting the API.'
+  );
+  process.exit(1);
+}
+
 const migration = spawnSync(python, ['-m', 'backend.migrate'], { stdio: 'inherit' });
 if (migration.status !== 0) {
   process.exit(migration.status ?? 1);

@@ -10,16 +10,16 @@
       <div><p class="kicker">Continue watching</p><h2>Not finished yet</h2></div>
     </div>
     <div class="continueGrid">
-      <button class="continueCard" *ngFor="let movie of continueWatching; let i = index">
+      <button class="continueCard" *ngFor="let movie of continueWatching; let i = index" (click)="resume(movie)">
         <div>
           <!-- Using backdrop_path for the horizontal video thumbnail ratio -->
           <img [src]="movieService.getImageUrl(movie.backdrop_path)" [alt]="movie.title" />
           <span class="resume"><app-icon name="play"></app-icon></span>
           <i><b style="width: 0%"></b></i>
         </div>
-        <small>Film &bull; Resume where you left off</small>
-        <h3>{{ movie.title }}</h3>
-        <p>Resume watching</p>
+        <small>{{ movie.media_type === 'tv' ? 'TV Series' : 'Film' }} &bull; Resume where you left off</small>
+        <h3>{{ movieService.getTitle(movie) }}</h3>
+        <p>{{ movie.media_type === 'tv' && movie.watchSeason ? 'Season ' + movie.watchSeason + ', Episode ' + movie.watchEpisode : 'Resume watching' }}</p>
       </button>
     </div>
   </section>

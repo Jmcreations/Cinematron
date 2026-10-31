@@ -8,5 +8,5 @@ import { CommonModule } from '@angular/common';
 })
 export class IconComponent {
   // Update the Input line to include the chevrons
-@Input() name: 'search' | 'close' | 'play' | 'plus' | 'user' | 'chevron-left' | 'chevron-right' | 'chevron-down' = 'play';
+@Input() name: 'search' | 'close' | 'play' | 'plus' | 'user' | 'maximize' | 'chevron-left' | 'chevron-right' | 'chevron-down' = 'play';
 }

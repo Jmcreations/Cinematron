@@ -32,6 +32,10 @@ yarn-error.log
 # Miscellaneous
 /.angular/cache
 .sass-cache/
+/.env
+/.env.*
+!.env.example
+*.db
 /connect.lock
 /coverage
 /libpeerconnection.log
@@ -42,3 +46,6 @@ __screenshots__/
 # System files
 .DS_Store
 Thumbs.db
+.vercel
+.env*
+!.env.example

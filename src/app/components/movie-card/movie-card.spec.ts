@@ -1,17 +1,26 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { MovieCard } from './movie-card';
+import { MovieCardComponent } from './movie-card';
 
-describe('MovieCard', () => {
-  let component: MovieCard;
-  let fixture: ComponentFixture<MovieCard>;
+describe('MovieCardComponent', () => {
+  let component: MovieCardComponent;
+  let fixture: ComponentFixture<MovieCardComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MovieCard],
+      imports: [MovieCardComponent],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(MovieCard);
+    fixture = TestBed.createComponent(MovieCardComponent);
+    fixture.componentRef.setInput('movie', {
+      id: 1,
+      title: 'Test movie',
+      overview: '',
+      poster_path: '',
+      backdrop_path: '',
+      release_date: '2026-01-01',
+      vote_average: 0
+    });
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

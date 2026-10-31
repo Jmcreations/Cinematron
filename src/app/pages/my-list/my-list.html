@@ -15,10 +15,9 @@
           <!-- Using backdrop_path for the horizontal video thumbnail ratio -->
           <img [src]="movieService.getImageUrl(movie.backdrop_path)" [alt]="movie.title" />
           <span class="resume"><app-icon name="play"></app-icon></span>
-          <!-- Mock progress bar calculation -->
-          <i><b [style.width.%]="42 + (i * 17)"></b></i>
+          <i><b style="width: 0%"></b></i>
         </div>
-        <small>Film &bull; {{ 18 + (i * 12) }} min left</small>
+        <small>Film &bull; Resume where you left off</small>
         <h3>{{ movie.title }}</h3>
         <p>Resume watching</p>
       </button>

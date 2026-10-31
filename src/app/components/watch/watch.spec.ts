@@ -1,17 +1,21 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideRouter } from '@angular/router';
 
-import { Watch } from './watch';
+import { WatchComponent } from './watch';
 
-describe('Watch', () => {
-  let component: Watch;
-  let fixture: ComponentFixture<Watch>;
+describe('WatchComponent', () => {
+  let component: WatchComponent;
+  let fixture: ComponentFixture<WatchComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Watch],
+      imports: [WatchComponent],
+      providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([])],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(Watch);
+    fixture = TestBed.createComponent(WatchComponent);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

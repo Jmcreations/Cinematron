@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { MovieService } from '../../services/movie';
 import { OverlayStateService } from '../../services/overlay-state';
+import { WatchlistService } from '../../services/watchlist';
 import { IconComponent } from '../icon/icon';
 import { StarRatingComponent } from '../star-rating/star-rating';
 import { catchError, filter, of, switchMap, timeout } from 'rxjs';
@@ -13,6 +14,7 @@ export interface MovieDetails {
   title: string;
   tagline: string;
   poster_path: string;
+  backdrop_path: string;
   release_date: string;
   runtime: number;
   overview: string;
@@ -32,6 +34,7 @@ export class MovieDetailsComponent implements OnInit {
   sanitizer = inject(DomSanitizer);
   router = inject(Router);
   private changeDetector = inject(ChangeDetectorRef);
+  private watchlistService = inject(WatchlistService);
   
   movie: MovieDetails | null = null;
   cast: any[] = [];
@@ -72,6 +75,7 @@ export class MovieDetailsComponent implements OnInit {
         }
 
         this.movie = data;
+        this.saved = this.watchlistService.hasMovie(data.id);
         this.cast = data.credits?.cast?.slice(0, 4) || [];
         this.loading = false;
         this.changeDetector.markForCheck();
@@ -96,7 +100,7 @@ export class MovieDetailsComponent implements OnInit {
     if (this.movie) {
       const movieId = this.movie.id;
       this.closeDetails();
-      this.router.navigate(['/watch', movieId]);
+      this.router.navigate(['/watch', 'movie', movieId]);
     }
   }
 
@@ -109,6 +113,8 @@ export class MovieDetailsComponent implements OnInit {
   }
 
   toggleSaved() {
-    this.saved = !this.saved;
+    if (this.movie) {
+      this.saved = this.watchlistService.toggleMovie(this.movie);
+    }
   }
 }

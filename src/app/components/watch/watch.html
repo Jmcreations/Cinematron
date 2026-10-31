@@ -1,30 +1,34 @@
-<section class="watchPage" *ngIf="movie; else watchState">
-  
-  <nav class="watchNav">
-    <button class="back" (click)="goBack()">← Back</button>
-  </nav>
+<section class="watchPage" *ngIf="media; else watchState">
+
+  <header class="watchHeader">
+    <div class="headerLeft">
+      <a routerLink="/" class="brand"><span>C</span> CINEMATRON</a>
+      <button class="back" (click)="goBack()">← Back to details</button>
+    </div>
+    <button class="profileBtn"><app-icon name="user"></app-icon> Profile</button>
+  </header>
 
   <div class="player">
     <iframe *ngIf="isPlaying && videoUrl" [src]="videoUrl" referrerpolicy="origin" width="100%" height="100%" frameborder="0" allowfullscreen allow="autoplay; encrypted-media; fullscreen" style="position: absolute; inset: 0; z-index: 5;"></iframe>
-    
+
     <ng-container *ngIf="!isPlaying">
-      <img [src]="movieService.getImageUrl(movie.backdrop_path, 'original')" [alt]="movie.title" />
+      <img [src]="movieService.getImageUrl(media.backdrop_path, 'original')" [alt]="media.name || media.title" />
       <div class="playerShade"></div>
-      
-      <div class="bigPlay" (click)="playVideo()" *ngIf="videoUrl">
+
+      <div class="bigPlay" (click)="playContent(1)" *ngIf="videoUrl">
         <app-icon name="play"></app-icon>
       </div>
-      
+
       <div class="playerInfo">
-        <p>FEATURE FILM</p>
-        <h1>{{ movie.title }}</h1>
-        <span>{{ movie.release_date.substring(0, 4) }} &bull; {{ movie.runtime }}m</span>
+        <p>{{ mediaType === 'tv' ? 'S' + activeSeason + ' E' + activeEpisode : 'FEATURE FILM' }}</p>
+        <h1>{{ media.title || media.name }}</h1>
+        <span>{{ media.runtime || media.episode_run_time?.[0] || 120 }} min &bull; UHD &bull; 5.1</span>
       </div>
-      
+
       <div class="timeline">
         <i>0:00</i>
-        <span></span>
-        <b>{{ movie.runtime }}:00</b>
+        <div class="track"><div class="fill" style="width: 0%;"></div></div>
+        <b>-{{ media.runtime || media.episode_run_time?.[0] || 120 }}:00</b>
       </div>
     </ng-container>
   </div>
@@ -32,35 +36,71 @@
   <!-- Server Switcher Block -->
   <div class="serverSwitcher" *ngIf="isPlaying">
     <span>Streaming Server:</span>
-    <button *ngFor="let server of servers; let i = index" 
+    <button *ngFor="let server of servers; let i = index"
             [class.active]="activeServerIndex === i"
             (click)="setServer(i)">
       {{ server.name }}
     </button>
   </div>
 
-  <section class="related" *ngIf="similarMovies.length">
-    <div class="episodeHeader">
-      <div>
-        <p class="kicker">More like this</p>
-        <h2>Related Films</h2>
+  <div class="watchContent">
+    <!-- Episodes Section (Only visible for TV Shows) -->
+    <section class="episodesSection" *ngIf="mediaType === 'tv' && episodes.length > 0">
+      <div class="sectionHeader">
+        <div>
+          <p class="kicker">{{ media.name | uppercase }}</p>
+          <h2>Episodes</h2>
+        </div>
+        <div class="headerTools">
+          <div class="ratingWrapper">
+            <span style="color:#514c50; font-size:10px; letter-spacing:0.1em; text-transform:uppercase;">Your Rating</span>
+            <app-star-rating [rating]="userRating" (ratingChange)="userRating = $event"></app-star-rating>
+          </div>
+          <div class="seasonToggle">
+            <button *ngFor="let s of seasons"
+                    [class.active]="activeSeason === s.season_number"
+                    (click)="loadSeason(s.season_number)">
+              Season {{ s.season_number }}
+            </button>
+          </div>
+        </div>
       </div>
-      <div class="episodeTools">
-        <app-star-rating [rating]="userRating" (ratingChange)="userRating = $event"></app-star-rating>
+
+      <div class="episodeGrid">
+        <div class="episodeCard" *ngFor="let ep of episodes" (click)="playContent(ep.episode_number)">
+          <div class="epThumb">
+            <img [src]="ep.still_path ? movieService.getImageUrl(ep.still_path, 'w300') : movieService.getImageUrl(media.backdrop_path, 'w300')" [alt]="ep.name" />
+            <app-icon name="play"></app-icon>
+          </div>
+          <div class="epDetails">
+            <p class="epMeta">EPISODE {{ ep.episode_number }} &bull; {{ ep.runtime || media.episode_run_time?.[0] || 45 }} MIN</p>
+            <h3>{{ ep.name }}</h3>
+            <p class="epDesc">{{ ep.overview || 'No synopsis available for this episode.' }}</p>
+          </div>
+        </div>
       </div>
-    </div>
-    
-    <div class="grid">
-      <app-movie-card *ngFor="let similar of similarMovies" [movie]="similar" (cardClick)="openDetails($event)"></app-movie-card>
-    </div>
-  </section>
-  
+    </section>
+
+    <!-- Related Titles Section -->
+    <section class="related" *ngIf="similarMovies.length">
+      <div class="sectionHeader">
+        <div>
+          <p class="kicker">KEEP EXPLORING</p>
+          <h2>Related titles</h2>
+        </div>
+      </div>
+
+      <div class="grid">
+        <app-movie-card *ngFor="let similar of similarMovies" [movie]="similar" (cardClick)="openDetails($event)"></app-movie-card>
+      </div>
+    </section>
+  </div>
 </section>
 
 <ng-template #watchState>
   <section class="watchState" role="status">
     <button class="back" (click)="goBack()">← Back</button>
-    <p *ngIf="loading">Loading movie details...</p>
-    <p *ngIf="loadError">Unable to load this movie. Please return and try again.</p>
+    <p *ngIf="loading">Loading media...</p>
+    <p *ngIf="loadError">Unable to load this title. Please return and try again.</p>
   </section>
 </ng-template>

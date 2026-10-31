@@ -37,7 +37,12 @@ export class DiscoverComponent implements OnInit {
       filter(event => event instanceof NavigationEnd)
     ).subscribe(() => this.refreshWatchHistory());
 
-    this.movieService.getTrendingMovies().subscribe(movies => {
+    this.movieService.getTrendingMovies().pipe(
+      catchError(error => {
+        console.error('Unable to load trending movies', error);
+        return of([]);
+      })
+    ).subscribe(movies => {
       this.top10 = movies.slice(0, 10);
       this.changeDetector.markForCheck();
     });
@@ -57,7 +62,12 @@ export class DiscoverComponent implements OnInit {
       this.changeDetector.markForCheck();
     });
 
-    this.movieService.getGenres().subscribe(genres => {
+    this.movieService.getGenres().pipe(
+      catchError(error => {
+        console.error('Unable to load genres', error);
+        return of([]);
+      })
+    ).subscribe(genres => {
       this.genres = genres;
       this.changeDetector.markForCheck();
       this.loadGenreMovies(this.selectedGenre.id, this.selectedGenre.name);

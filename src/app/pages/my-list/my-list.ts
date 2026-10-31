@@ -4,6 +4,8 @@ import { MovieCardComponent } from '../../components/movie-card/movie-card';
 import { MovieService, TMDBMovie } from '../../services/movie';
 import { OverlayStateService } from '../../services/overlay-state';
 import { IconComponent } from '../../components/icon/icon';
+import { WatchHistoryService } from '../../services/watch-history';
+import { WatchlistService } from '../../services/watchlist';
 
 @Component({
   selector: 'app-my-list',
@@ -15,17 +17,16 @@ export class MyListComponent implements OnInit {
   movieService = inject(MovieService);
   overlayService = inject(OverlayStateService);
   private changeDetector = inject(ChangeDetectorRef);
+  private watchHistory = inject(WatchHistoryService);
+  private watchlistService = inject(WatchlistService);
   
   continueWatching: TMDBMovie[] = [];
   watchlist: TMDBMovie[] = [];
 
   ngOnInit() {
-    this.movieService.getNowPlayingMovies().subscribe(data => {
-      // Mock user lists until the backend is hooked up
-      this.continueWatching = data.slice(0, 3);
-      this.watchlist = data.slice(3, 11);
-      this.changeDetector.markForCheck();
-    });
+    this.continueWatching = this.watchHistory.getMovies();
+    this.watchlist = this.watchlistService.getMovies();
+    this.changeDetector.markForCheck();
   }
 
   openDetails(id: number) {

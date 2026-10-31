@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { MovieGrid } from './movie-grid';
+import { MovieGridComponent } from './movie-grid';
 
-describe('MovieGrid', () => {
-  let component: MovieGrid;
-  let fixture: ComponentFixture<MovieGrid>;
+describe('MovieGridComponent', () => {
+  let component: MovieGridComponent;
+  let fixture: ComponentFixture<MovieGridComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MovieGrid],
+      imports: [MovieGridComponent],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(MovieGrid);
+    fixture = TestBed.createComponent(MovieGridComponent);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

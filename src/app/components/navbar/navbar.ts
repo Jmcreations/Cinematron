@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, inject } from '@angular/core';
+import { ChangeDetectorRef, ElementRef, ViewChild, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { Subject, debounceTime, distinctUntilChanged, switchMap, of } from 'rxjs';
@@ -13,6 +13,7 @@ import { IconComponent } from '../icon/icon';
   templateUrl: './navbar.html'
 })
 export class NavbarComponent {
+  @ViewChild('searchInput') searchInput!: ElementRef<HTMLInputElement>;
   overlayService = inject(OverlayStateService);
   movieService = inject(MovieService);
   private changeDetector = inject(ChangeDetectorRef);
@@ -46,10 +47,13 @@ export class NavbarComponent {
   }
 
   submitSearch(event: Event) {
-  const query = (event.target as HTMLInputElement).value;
-  if (query.trim()) {
-    this.searchResults = []; // Close dropdown
-    this.router.navigate(['/search'], { queryParams: { q: query } });
+    event.preventDefault(); // Stops the form from refreshing the page
+    const query = this.searchInput.nativeElement.value;
+
+    if (query.trim()) {
+      this.searchResults = [];
+      this.searchInput.nativeElement.blur(); // Dismisses mobile keyboard
+      this.router.navigate(['/search'], { queryParams: { q: query } });
+    }
   }
-}
 }

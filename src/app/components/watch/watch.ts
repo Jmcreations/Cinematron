@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild, inject } from '@angular/core';
+import { ChangeDetectorRef, HostListener, Component, ElementRef, OnInit, ViewChild, inject } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { DomSanitizer, SafeResourceUrl, Title, Meta } from '@angular/platform-browser';
@@ -43,6 +43,7 @@ export class WatchComponent implements OnInit {
 
   activeServerIndex = 0;
   isPlaying = false;
+  isFullscreen = false;
   episodeChangePending = false;
   loading = true;
   loadError = false;
@@ -183,17 +184,21 @@ export class WatchComponent implements OnInit {
   }
 
   toggleFullscreen() {
-    const frame = this.videoFrame?.nativeElement;
+    // Target the wrapper wrapper instead of the iframe
     const player = this.playerElement?.nativeElement;
-    if (!frame || !player) return;
+    if (!player) return;
 
     if (document.fullscreenElement) {
-      document.exitFullscreen().catch(error => console.error('Unable to exit fullscreen', error));
-      return;
+      document.exitFullscreen().catch(error => console.error(error));
+    } else {
+      player.requestFullscreen?.().catch((error: any) => console.error(error));
     }
+  }
 
-    (frame.requestFullscreen?.() || player.requestFullscreen?.())
-      ?.catch(error => console.error('Unable to enter fullscreen', error));
+  @HostListener('document:fullscreenchange')
+  onFullscreenChange() {
+    this.isFullscreen = !!document.fullscreenElement;
+    this.changeDetector.markForCheck();
   }
 
   setServer(index: number) {

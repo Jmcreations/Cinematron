@@ -46,4 +46,10 @@ export class MyListComponent implements OnInit {
     this.continueWatching = this.watchHistory.getMovies();
     this.changeDetector.markForCheck();
   }
+
+  removeFromWatchlist(movieId: number) {
+    this.watchlistService.removeMovie(movieId);
+    this.watchlist = this.watchlistService.getMovies();
+    this.changeDetector.markForCheck();
+  }
 }

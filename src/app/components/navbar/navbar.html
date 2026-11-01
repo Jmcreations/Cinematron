@@ -16,10 +16,10 @@
   <input
     id="searchQuery"
     name="searchQuery"
-    type="text"
+    type="search"
     placeholder="Search films, people, genres"
     (input)="onSearch($event)"
-    (keyup.enter)="submitSearch($event)"
+    #searchInput
   />
   <kbd>⌘ K</kbd>
 

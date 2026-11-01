@@ -1,16 +1,15 @@
 <section class="hero"
-         (pointerdown)="onPointerDown($event)"
-         (pointerup)="onPointerUp($event)"
-         (pointercancel)="onPointerCancel()">
+(pointerdown)="onPointerDown($event)"
+(pointerup)="onPointerUp($event)"
+(pointercancel)="onPointerCancel()">
+
   <ng-container *ngIf="movies.length > 0">
     <!-- Background Image & Gradient -->
     <img class="heroImage heroImageCurrent" [src]="movieService.getImageUrl(movies[heroIndex].backdrop_path, 'original')" alt="" />
     <img class="heroImage heroImagePrevious" *ngIf="previousMovie" [src]="movieService.getImageUrl(previousMovie.backdrop_path, 'original')" alt="" />
     <div class="heroShade"></div>
-
-    <!-- Arrows -->
-    <button type="button" class="heroArrow left" (click)="prevHero()"><app-icon name="chevron-left"></app-icon></button>
-    <button type="button" class="heroArrow right" (click)="nextHero()"><app-icon name="chevron-right"></app-icon></button>
+    <div class="clickZone left" (click)="prevHero()" aria-label="Previous preview"></div>
+    <div class="clickZone right" (click)="nextHero()" aria-label="Next preview"></div>
 
     <!-- Restored Text & Buttons -->
     <div class="heroContent">
@@ -31,18 +30,27 @@
         </button>
 
         <button type="button" class="secondary" (click)="toggleSaved()">
-          <app-icon name="plus"></app-icon> {{ saved ? 'In my list' : 'My list' }}
+          <app-icon name="plus"></app-icon> {{ saved ? 'Add to My list' : 'Added to My list' }}
         </button>
       </div>
     </div>
 
-    <!-- Animated Dots -->
-    <div class="heroDots">
-      <button *ngFor="let movie of movies; let i = index"
-              [class.active]="heroIndex === i"
-              (click)="setHeroIndex(i)">
-        <span class="progress-bar" *ngIf="heroIndex === i"></span>
-      </button>
+    <!-- Grouped Navigation (Arrows + Dots) -->
+    <!-- Grouped Navigation (Dots Only) -->
+    <div class="heroNav">
+      <div class="heroDots">
+        <button *ngFor="let movie of movies; let i = index"
+                [class.active]="heroIndex === i"
+                (click)="setHeroIndex(i)"
+                aria-label="Change hero slide">
+          <span class="progress-bar" *ngIf="heroIndex === i"></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Decorative Vertical Text -->
+    <div class="heroVerticalText">
+      A {{ movieService.getMediaType(movies[heroIndex]) === 'tv' ? 'SERIES' : 'FILM' }} BY CINEMATRON
     </div>
   </ng-container>
 </section>

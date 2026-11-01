@@ -46,4 +46,16 @@ export class WatchlistService {
 
     return !isSaved;
   }
+
+  removeMovie(movieId: number): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+    try {
+      const movies = this.getMovies().filter(movie => movie.id !== movieId);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(movies));
+    } catch (error) {
+      console.error('Unable to remove movie from watchlist', error);
+    }
+  }
 }

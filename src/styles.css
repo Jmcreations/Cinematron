@@ -53,6 +53,10 @@ app-icon, .movie img, .movie div, .movie h3, .movie p {
   pointer-events: none !important;
 }
 
+body.modal-open {
+  overflow: hidden;
+}
+
 
 /* --- TYPOGRAPHY & SHARED --- */
 h1 {
@@ -254,6 +258,10 @@ app-navbar {
   outline: 0;
   color: white;
   font-size: 12px;
+}
+@media (max-width: 700px) {
+  .search { height: 46px; } /* Taller tap target */
+  .search input { font-size: 16px; } /* Prevents iOS auto-zoom */
 }
 
 .search kbd {
@@ -571,49 +579,20 @@ app-navbar {
   margin: 20px 0 28px;
 }
 
-.heroArrow {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 20;
-  background: rgba(20, 20, 20, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: white;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 !important;
-  cursor: pointer;
-  backdrop-filter: blur(8px);
-}
-
-.heroArrow app-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 30px;
-  height: 30px;
-}
-
-.heroArrow:hover {
-  background: #640157;
-  zoom: 1.05;
-}
-
-.heroArrow.left { left: 4vw; }
-.heroArrow.right { right: 4vw; }
-
-.heroDots {
+.heroNav {
   position: absolute;
   z-index: 3;
   right: 6vw;
-  bottom: 50px;
+  bottom: 38px;
   display: flex;
-  gap: 7px;
+  align-items: center;
+  gap: 12px;
 }
+
+.heroDots {
+  display:flex;
+  align-items:center;
+  gap:7px; }
 
 .heroDots button {
   width: 22px;
@@ -635,12 +614,49 @@ app-navbar {
 
 .heroDots button .progress-bar {
   position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
+  inset: 0;
   background: #640157;
   width: 0%;
   animation: loaderBar 8s linear forwards;
+}
+
+.heroVerticalText {
+  position: absolute;
+  right: 6vw;
+  bottom: 130px;
+  writing-mode: vertical-rl;
+  color: #777277;
+  font: 600 10px "Manrope", sans-serif;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  z-index: 10;
+}
+
+/* --- INVISIBLE EDGE CLICKS --- */
+.clickZone {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 10vw; /* Covers the left and right edges responsively */
+  z-index: 5; /* Sits securely behind your z-index: 10 action buttons */
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent; /* Prevents gray flicker on mobile taps */
+}
+
+.clickZone.left {
+  left: 0;
+}
+
+.clickZone.right {
+  right: 0;
+}
+
+/* Redundancy check to ensure action buttons sit entirely above the invisible zones */
+.heroContent .actions {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  gap: 10px;
 }
 
 
@@ -682,25 +698,26 @@ app-navbar {
 .continueRemove {
   position: absolute;
   top: 8px;
-  left: 8px; /* Moved from right to left to avoid the rating badge */
+  left: 8px;
   z-index: 2;
-  width: 30px;
-  height: 30px;
-  display: grid;
-  place-items: center;
-  border: 1px solid rgba(255,255,255,.25);
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
-  background: rgba(15,15,15,.86);
+  border: 1px solid #4a4549;
+  background: #161416cc;
   color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   opacity: 0;
   transform: translateY(-4px);
   pointer-events: none;
   transition: opacity .2s ease, transform .2s ease, background .2s ease;
 }
 
-.continueRemove app-icon {
-  width: 15px;
-  height: 15px;
+.continueRemove app-icon svg {
+  width: 17px;
+  height: 17px;
 }
 
 .continueCard:hover .continueRemove,
@@ -1359,5 +1376,12 @@ app-navbar {
 
 @media (max-width: 380px) {
   .hero { min-height: 520px; padding-bottom: 62px; }
+  .heroArrow {display: none !important;}
+  .heroNav {
+    right: 5vw;
+    left: 5vw;
+    justify-content: center;
+    bottom: 30px;
+  }
   .primary, .secondary, .watchNow { padding: 0 12px; font-size: 11px; }
 }

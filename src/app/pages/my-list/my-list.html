@@ -17,7 +17,7 @@
                (keydown.enter)="resume(movie)">
         <div class="continueImage">
           <img [src]="movieService.getImageUrl(movie.backdrop_path, 'w780')" [alt]="movie.title || movie.name" />
-          <button class="continueRemove" type="button" aria-label="Remove from Continue Watching"
+          <button class="close continueRemove" type="button" aria-label="Remove from Continue Watching"
                   (click)="removeFromContinueWatching(movie.id); $event.stopPropagation()">
             <app-icon name="close"></app-icon>
           </button>
@@ -38,7 +38,12 @@
       <div><p class="kicker">Saved for later</p><h2>My watchlist</h2></div>
     </div>
     <div class="grid">
-      <app-movie-card *ngFor="let movie of watchlist" [movie]="movie" [showRemove]="true" (cardClick)="openDetails($event)"></app-movie-card>
+      <div class="homeContinueCard" *ngFor="let movie of watchlist">
+        <app-movie-card [movie]="movie" (cardClick)="openDetails($event)"></app-movie-card>
+        <button class="continueRemove" type="button" aria-label="Remove from Watchlist"
+                (click)="removeFromWatchlist(movie.id)">
+          <app-icon name="close"></app-icon>
+        </button>
+      </div>
     </div>
   </section>
-</section>

@@ -3,6 +3,7 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { OverlayStateService } from '../../services/overlay-state';
 import { MovieService, TMDBMovie } from '../../services/movie';
 import { IconComponent } from '../icon/icon';
+import { WatchlistService } from '../../services/watchlist';
 
 @Component({
   selector: 'app-hero',
@@ -12,6 +13,7 @@ import { IconComponent } from '../icon/icon';
 })
 export class HeroComponent implements OnInit, OnDestroy {
   overlayService = inject(OverlayStateService);
+  watchlistService = inject(WatchlistService);
   movieService = inject(MovieService);
   platformId = inject(PLATFORM_ID);
   private changeDetector = inject(ChangeDetectorRef);
@@ -33,6 +35,7 @@ export class HeroComponent implements OnInit, OnDestroy {
     this.movieService.getTrendingMovies().subscribe(data => {
       this.movies = data.slice(0, 6);
       this.resetTimer();
+      this.checkSavedState(); // Check saved state for the initial slide
       this.changeDetector.markForCheck();
     });
   }
@@ -48,6 +51,12 @@ export class HeroComponent implements OnInit, OnDestroy {
     this.timer = setInterval(() => {
       this.changeHero((this.heroIndex + 1) % this.movies.length);
     }, this.timerDuration);
+  }
+
+  checkSavedState() {
+    if (this.movies.length && this.movies[this.heroIndex]) {
+      this.saved = this.watchlistService.hasMovie(this.movies[this.heroIndex].id);
+    }
   }
 
   clearTimer() {
@@ -139,9 +148,9 @@ export class HeroComponent implements OnInit, OnDestroy {
     if (index === this.heroIndex || !this.movies.length) {
       return;
     }
-
     this.previousMovie = this.movies[this.heroIndex];
     this.heroIndex = index;
+    this.checkSavedState(); // Update saved state for the new slide
     this.changeDetector.markForCheck();
     clearTimeout(this.transitionTimer);
     this.transitionTimer = setTimeout(() => {
@@ -160,6 +169,13 @@ export class HeroComponent implements OnInit, OnDestroy {
     if (this.consumeSwipeClick()) {
       return;
     }
-    this.saved = !this.saved;
+    const currentMovie = this.movies[this.heroIndex];
+    if (currentMovie) {
+      this.saved = this.watchlistService.toggleMovie({
+        ...currentMovie,
+        media_type: currentMovie.media_type || 'movie'
+      });
+      this.changeDetector.markForCheck();
+    }
   }
 }

@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, inject, Renderer2 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { DomSanitizer, SafeResourceUrl, Title, Meta } from '@angular/platform-browser';
@@ -38,6 +38,7 @@ export class MovieDetailsComponent implements OnInit {
   router = inject(Router);
   titleService = inject(Title);
   metaService = inject(Meta);
+  renderer = inject(Renderer2);
   private changeDetector = inject(ChangeDetectorRef);
   private watchlistService = inject(WatchlistService);
 
@@ -66,6 +67,9 @@ export class MovieDetailsComponent implements OnInit {
         this.mediaType = media.type; // Save the type for routing
         this.changeDetector.markForCheck();
 
+        // Lock body scrolling when modal opens
+        this.renderer.addClass(document.body, 'modal-open');
+
         // Fetch dynamically based on media type
         const fetchRequest$ = this.mediaType === 'tv'
           ? this.movieService.getTvDetails(media.id)
@@ -87,15 +91,16 @@ export class MovieDetailsComponent implements OnInit {
           this.changeDetector.markForCheck();
           return;
         }
-
         this.movie = data;
         this.saved = this.watchlistService.hasMovie(data.id);
         this.cast = data.credits?.cast?.slice(0, 4) || [];
         this.loading = false;
         this.changeDetector.markForCheck();
 
+        // Update Dynamic SEO for the modal
         const mediaTitle = this.movieService.getTitle(data);
         const pageTitle = `${mediaTitle} - Cinematron`;
+
         this.titleService.setTitle(pageTitle);
         this.metaService.updateTag({ name: 'description', content: `Watch ${mediaTitle} online for free on Cinematron. ${data.overview?.substring(0, 150)}...` });
         this.metaService.updateTag({ property: 'og:title', content: pageTitle });
@@ -130,6 +135,7 @@ export class MovieDetailsComponent implements OnInit {
     this.movie = null;
     this.loading = false;
     this.showTrailerModal = false;
+    this.renderer.removeClass(document.body, 'modal-open');
 
     // Revert SEO to default homepage state
     this.titleService.setTitle('Cinematron - Free Movies & TV Shows Streaming');

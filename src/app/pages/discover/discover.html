@@ -10,7 +10,7 @@
     <button class="viewAll">View all &rarr;</button>
   </div>
   <div class="grid">
-    <app-movie-card *ngFor="let movie of top10 | slice:0:6" [movie]="movie" (cardClick)="openDetails($event)"></app-movie-card>
+    <app-movie-card *ngFor="let movie of top10 | slice:0:10" [movie]="movie" (cardClick)="openDetails($event)"></app-movie-card>
   </div>
 </section>
 
@@ -25,7 +25,7 @@
   <div class="grid">
     <div class="homeContinueCard" *ngFor="let movie of continueWatching">
       <app-movie-card [movie]="movie" (cardClick)="openDetails($event)"></app-movie-card>
-      <button class="continueRemove" type="button" aria-label="Remove from Continue Watching"
+      <button class="close continueRemove" type="button" aria-label="Remove from Continue Watching"
               (click)="removeFromContinueWatching(movie.id)">
         <app-icon name="close"></app-icon>
       </button>

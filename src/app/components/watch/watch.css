@@ -253,3 +253,20 @@
 .epNavBtn:not(:disabled):hover {
   background: #b55f99;
 }
+
+/* Fullscreen Hover Logic */
+.player.isFullscreen {
+  cursor: none;
+}
+.player.isFullscreen:hover,
+.player.isFullscreen:mousemove {
+  cursor: default;
+}
+.player.isFullscreen .fullscreenButton {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.player.isFullscreen:hover .fullscreenButton,
+.player.isFullscreen:mousemove .fullscreenButton {
+  opacity: 1;
+}

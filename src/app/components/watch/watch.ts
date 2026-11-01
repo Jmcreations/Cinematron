@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild, inject } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { DomSanitizer, SafeResourceUrl, Title, Meta } from '@angular/platform-browser';
 import { MovieService, TMDBMovie } from '../../services/movie';
 import { MovieCardComponent } from '../../components/movie-card/movie-card';
 import { IconComponent } from '../../components/icon/icon';
@@ -21,6 +21,8 @@ export class WatchComponent implements OnInit {
   route = inject(ActivatedRoute);
   router = inject(Router);
   location = inject(Location);
+  titleService = inject(Title);
+  metaService = inject(Meta);
   movieService = inject(MovieService);
   overlayService = inject(OverlayStateService);
   sanitizer = inject(DomSanitizer);
@@ -103,6 +105,17 @@ export class WatchComponent implements OnInit {
       if (!data) return;
 
       this.media = data;
+
+      const mediaTitle = this.movieService.getTitle(data);
+      const pageTitle = `Watch ${mediaTitle} - Cinematron`;
+
+      this.titleService.setTitle(pageTitle);
+      this.metaService.updateTag({ name: 'description', content: `Watch ${mediaTitle} online for free on Cinematron. ${data.overview?.substring(0, 150)}...` });
+      this.metaService.updateTag({ property: 'og:title', content: pageTitle });
+
+      if (data.backdrop_path) {
+        this.metaService.updateTag({ property: 'og:image', content: this.movieService.getImageUrl(data.backdrop_path, 'w1280') });
+      }
       this.isPlaying = false;
       const historyEntry = this.watchHistory.getMovies().find(item => item.id === data.id);
       this.activeSeason = historyEntry?.watchSeason || 1;

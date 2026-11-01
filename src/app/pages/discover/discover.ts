@@ -6,7 +6,7 @@ import { HeroComponent } from '../../components/hero/hero';
 import { MovieCardComponent } from '../../components/movie-card/movie-card';
 import { IconComponent } from '../../components/icon/icon';
 import { catchError, filter, of, Subject, switchMap } from 'rxjs';
-import { WatchHistoryService } from '../../services/watch-history';
+import { WatchHistoryMovie, WatchHistoryService } from '../../services/watch-history';
 import { NavigationEnd, Router } from '@angular/router';
 
 @Component({
@@ -23,7 +23,7 @@ export class DiscoverComponent implements OnInit {
   private watchHistory = inject(WatchHistoryService);
 
   top10: TMDBMovie[] = [];
-  continueWatching: TMDBMovie[] = [];
+  continueWatching: WatchHistoryMovie[] = [];
 
   genres: any[] = [];
   selectedGenre = { id: 28, name: 'Action' }; // Default to Action
@@ -77,6 +77,11 @@ export class DiscoverComponent implements OnInit {
   private refreshWatchHistory() {
     this.continueWatching = this.watchHistory.getMovies();
     this.changeDetector.markForCheck();
+  }
+
+  removeFromContinueWatching(movieId: number) {
+    this.watchHistory.removeMovie(movieId);
+    this.refreshWatchHistory();
   }
 
   loadGenreMovies(id: number, name: string) {

@@ -1,0 +1,22 @@
+<section class="libraryPage">
+  <header class="pageHero">
+    <p class="kicker">Browse the library</p>
+    <h1>Explore</h1>
+    <p>Discover your next favorite film or series by genre.</p>
+
+    <div class="genreFilters">
+      <button [class.active]="!activeGenreId" (click)="loadTrending()">All Trending</button>
+      <button *ngFor="let genre of genres"
+              [class.active]="activeGenreId === genre.id"
+              (click)="loadGenre(genre.id, genre.name)">
+        {{ genre.name }}
+      </button>
+    </div>
+  </header>
+
+  <section class="catalog" style="padding-top: 40px;">
+    <div class="grid" *ngIf="movies.length">
+      <app-movie-card *ngFor="let movie of movies" [movie]="movie" (cardClick)="openDetails($event)"></app-movie-card>
+    </div>
+  </section>
+</section>

@@ -1,6 +1,6 @@
+import { catchError, map, Observable, of, forkJoin } from 'rxjs';
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { catchError, map, Observable, of } from 'rxjs';
 
 export interface TMDBMovie {
   id: number;
@@ -25,17 +25,27 @@ export class MovieService {
   private baseUrl = '/api/tmdb/3';
 
   getTrendingMovies(): Observable<TMDBMovie[]> {
-    return this.http.get<any>(`${this.baseUrl}/trending/all/week`)
-      .pipe(
-        map(response => response.results.filter((item: any) => item.media_type !== 'person')),
-        catchError(error => {
-          console.error('Unable to load trending media', error);
-          return of([]);
-        })
-      );
+    // Fetch pages 1 and 2 concurrently to double the results
+    return forkJoin({
+      page1: this.http.get<any>(`${this.baseUrl}/trending/all/week?page=1`),
+      page2: this.http.get<any>(`${this.baseUrl}/trending/all/week?page=2`)
+    }).pipe(
+      map(res => {
+        const combined = [...res.page1.results, ...res.page2.results];
+        return combined.filter((item: any) => item.media_type !== 'person');
+      }),
+      catchError(error => {
+        console.error('Unable to load trending media', error);
+        return of([]);
+      })
+    );
   }
 
-  getImageUrl(path: string, width: string = 'w500'): string {
+  getImageUrl(path: string | null | undefined, width: string = 'w500'): string {
+    if (!path) {
+      // Returns a clean, dark placeholder matching your theme when TMDB has no poster
+      return `https://placehold.co/500x750/111111/444444?text=No+Poster`;
+    }
     return `https://image.tmdb.org/t/p/${width}${path}`;
   }
 
@@ -68,12 +78,45 @@ export class MovieService {
 
   getGenres(): Observable<any[]> {
     return this.http.get<any>(`${this.baseUrl}/genre/movie/list`)
-    .pipe(map(res => res.genres));
+    .pipe(
+      map(res => res.genres),
+      catchError(error => {
+        console.error('Unable to load movie genres', error);
+        return of([]);
+      })
+    );
   }
 
   getMoviesByGenre(genreId: number): Observable<TMDBMovie[]> {
-    return this.http.get<any>(`${this.baseUrl}/discover/movie?with_genres=${genreId}`)
-    .pipe(map(res => res.results.map((m: any) => ({ ...m, media_type: 'movie' }))));
+    // Fetch pages 1 and 2 concurrently to double the results
+    return forkJoin({
+      page1: this.http.get<any>(`${this.baseUrl}/discover/movie?with_genres=${genreId}&page=1`),
+      page2: this.http.get<any>(`${this.baseUrl}/discover/movie?with_genres=${genreId}&page=2`)
+    }).pipe(
+      map(res => {
+        const combined = [...res.page1.results, ...res.page2.results];
+        return combined.map((m: any) => ({ ...m, media_type: 'movie' }));
+      }),
+      catchError(error => {
+        console.error('Unable to load genre movies', error);
+        return of([]);
+      })
+    );
+  }
+
+  getRelatedMovies(genreIds: number[], excludeId: number): Observable<TMDBMovie[]> {
+    const genres = genreIds.join('|');
+    return this.http.get<any>(
+      `${this.baseUrl}/discover/movie?with_genres=${genres}&page=1`
+    ).pipe(
+      map(response => (response.results || [])
+        .filter((movie: TMDBMovie) => movie.id !== excludeId)
+        .map((movie: TMDBMovie) => ({ ...movie, media_type: 'movie' }))),
+      catchError(error => {
+        console.error('Unable to load related movies', error);
+        return of([]);
+      })
+    );
   }
 
   // Updated to multi-search to fetch both TV and Movies
@@ -89,4 +132,10 @@ export class MovieService {
   getTvSeason(tmdb_id: number, seasonNumber: number): Observable<any> {
     return this.http.get<any>(`${this.baseUrl}/tv/${tmdb_id}/season/${seasonNumber}`);
   }
+
+
+
+
+
+
 }

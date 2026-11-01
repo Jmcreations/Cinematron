@@ -40,4 +40,10 @@ export class MyListComponent implements OnInit {
   resume(movie: any) {
     this.router.navigate(['/watch', movie.media_type || 'movie', movie.id]);
   }
+
+  removeFromContinueWatching(movieId: number) {
+    this.watchHistory.removeMovie(movieId);
+    this.continueWatching = this.watchHistory.getMovies();
+    this.changeDetector.markForCheck();
+  }
 }

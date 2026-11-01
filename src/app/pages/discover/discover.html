@@ -23,7 +23,13 @@
     </div>
   </div>
   <div class="grid">
-    <app-movie-card *ngFor="let movie of continueWatching" [movie]="movie" (cardClick)="openDetails($event)"></app-movie-card>
+    <div class="homeContinueCard" *ngFor="let movie of continueWatching">
+      <app-movie-card [movie]="movie" (cardClick)="openDetails($event)"></app-movie-card>
+      <button class="continueRemove" type="button" aria-label="Remove from Continue Watching"
+              (click)="removeFromContinueWatching(movie.id)">
+        <app-icon name="close"></app-icon>
+      </button>
+    </div>
   </div>
 </section>
 

@@ -1,0 +1,18 @@
+<section class="libraryPage">
+  <header class="pageHero">
+    <p class="kicker">Search Results</p>
+    <h1>{{ query ? 'Results for "' + query + '"' : 'Search' }}</h1>
+    <p>Found {{ results.length }} matching titles.</p>
+  </header>
+  <section class="catalog" style="padding-top: 40px;">
+    <div class="grid" *ngIf="results.length; else noResults">
+      <app-movie-card *ngFor="let movie of results" [movie]="movie" (cardClick)="openDetails($event)"></app-movie-card>
+    </div>
+    <ng-template #noResults>
+      <div style="text-align: center; padding: 60px 20px; color: #9a969a;">
+        <h2>No titles found</h2>
+        <p>Try adjusting your search query.</p>
+      </div>
+    </ng-template>
+  </section>
+</section>

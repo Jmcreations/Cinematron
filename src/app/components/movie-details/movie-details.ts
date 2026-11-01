@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { DomSanitizer, SafeResourceUrl, Title, Meta } from '@angular/platform-browser';
 import { MovieService } from '../../services/movie';
 import { OverlayStateService, MediaSelection } from '../../services/overlay-state';
 import { WatchlistService } from '../../services/watchlist';
@@ -36,6 +36,8 @@ export class MovieDetailsComponent implements OnInit {
   overlayService = inject(OverlayStateService);
   sanitizer = inject(DomSanitizer);
   router = inject(Router);
+  titleService = inject(Title);
+  metaService = inject(Meta);
   private changeDetector = inject(ChangeDetectorRef);
   private watchlistService = inject(WatchlistService);
 
@@ -92,6 +94,16 @@ export class MovieDetailsComponent implements OnInit {
         this.loading = false;
         this.changeDetector.markForCheck();
 
+        const mediaTitle = this.movieService.getTitle(data);
+        const pageTitle = `${mediaTitle} - Cinematron`;
+        this.titleService.setTitle(pageTitle);
+        this.metaService.updateTag({ name: 'description', content: `Watch ${mediaTitle} online for free on Cinematron. ${data.overview?.substring(0, 150)}...` });
+        this.metaService.updateTag({ property: 'og:title', content: pageTitle });
+
+        if (data.backdrop_path) {
+          this.metaService.updateTag({ property: 'og:image', content: this.movieService.getImageUrl(data.backdrop_path, 'w1280') });
+        }
+
         const trailer = data.videos?.results?.find((v: any) => v.site === 'YouTube' && v.type === 'Trailer');
         if (trailer) {
           this.trailerUrl = this.sanitizer.bypassSecurityTrustResourceUrl(`https://www.youtube.com/embed/${trailer.key}?autoplay=1`);
@@ -118,6 +130,12 @@ export class MovieDetailsComponent implements OnInit {
     this.movie = null;
     this.loading = false;
     this.showTrailerModal = false;
+
+    // Revert SEO to default homepage state
+    this.titleService.setTitle('Cinematron - Free Movies & TV Shows Streaming');
+    this.metaService.updateTag({ name: 'description', content: 'Watch your favorite movies and TV shows online for free on Cinematron. Explore a massive library of high-quality streaming content without limits.' });
+    this.metaService.updateTag({ property: 'og:title', content: 'Cinematron - Free Movies & TV Shows Streaming' });
+    this.metaService.updateTag({ property: 'og:image', content: '/trlogo.png' });
   }
 
   toggleSaved() {

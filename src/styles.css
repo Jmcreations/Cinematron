@@ -149,7 +149,7 @@ app-navbar {
 
 .brand span {
   width: 50px;
-  height: 34px;
+  height: 25px;
   border-radius: 9px 9px 9px 2px;
   font-size: 17px;
   color: white;
@@ -1149,16 +1149,43 @@ app-navbar {
 }
 
 @media (max-width: 700px) {
+  /* Navbar Overlap Fixes */
+  app-navbar { padding: 8px 12px; left: 2vw; right: 2vw; gap: 12px; height: 56px; }
+  .brand span { display: none; } /* Hide text, keep logo icon */
+  .brand img { height: 26px; }
+  .search { width: auto; flex: 1; margin: 0; }
+  .search input { width: 100%; }
+  .search kbd { display: none; } /* Hide keyboard shortcut on mobile */
+  .signin span:not(.accountIcon) { display: none; } /* Compact sign-in button */
+  .signin { padding: 0 4px; }
+
+  /* Hero & Modals */
   .hero { height: min(680px, 100svh); min-height: 560px; padding: 0 5vw 70px; }
   .heroContent { max-width: 100%; }
-  .heroContent h1 { font-size: clamp(40px, 12vw, 64px); }
-  .synopsis { display: -webkit-box; line-clamp: 4; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
-  .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+  .heroContent h1 { font-size: clamp(32px, 10vw, 48px); }
+  .synopsis { display: -webkit-box; line-clamp: 3; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  .detailCopy { padding: 25px 20px; }
+  .detailCopy h2 { font-size: 28px; }
+
+  /* Grids and Horizontal Scrolling Rails */
+  .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
   .catalog { padding-right: 5vw; padding-left: 5vw; }
-  .heroDots { right: 5vw; bottom: 28px; }
+  .filmRail {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    gap: 14px;
+    padding-bottom: 15px;
+    scrollbar-width: none;
+  }
+  .filmRail::-webkit-scrollbar { display: none; }
+  .filmRail > * {
+    flex: 0 0 calc(45vw - 10px);
+    scroll-snap-align: start;
+  }
 }
 
 @media (max-width: 380px) {
   .hero { min-height: 520px; padding-bottom: 62px; }
-  .primary, .secondary { padding: 0 14px; }
+  .primary, .secondary, .watchNow { padding: 0 12px; font-size: 11px; }
 }

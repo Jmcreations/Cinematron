@@ -45,4 +45,17 @@ export class WatchHistoryService {
       console.error('Unable to save watch history', error);
     }
   }
+
+  removeMovie(movieId: number): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+
+    try {
+      const movies = this.getMovies().filter(movie => movie.id !== movieId);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(movies));
+    } catch (error) {
+      console.error('Unable to remove watch history', error);
+    }
+  }
 }

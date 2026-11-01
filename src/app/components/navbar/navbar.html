@@ -6,6 +6,7 @@
 
 <div class="navlinks">
   <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Home</a>
+  <a routerLink="/explore" routerLinkActive="active">Explore</a>
   <a routerLink="/list" routerLinkActive="active">My List</a>
 </div>
 
@@ -13,6 +14,9 @@
 <label class="search">
   <app-icon name="search"></app-icon>
   <input
+    id="searchQuery"
+    name="searchQuery"
+    type="text"
     placeholder="Search films, people, genres"
     (input)="onSearch($event)"
     (keyup.enter)="submitSearch($event)"

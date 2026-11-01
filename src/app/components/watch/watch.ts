@@ -51,11 +51,6 @@ export class WatchComponent implements OnInit {
   // Unified Server Config
   servers = [
     {
-      name: 'VidSrc',
-      getMovieUrl: (tmdb_id: number) => `https://vidsrc.me/embed/movie?tmdb=${tmdb_id}`,
-      getTvUrl: (tmdb_id: number, s: number, e: number) => `https://vidsrc.me/embed/tv?tmdb=${tmdb_id}&season=${s}&episode=${e}`
-    },
-    {
       name: 'VidCore',
       getMovieUrl: (tmdb_id: number) => `https://vidcore.org/embed/movie/${tmdb_id}`,
       getTvUrl: (tmdb_id: number, season: number, episode: number) => `https://vidcore.org/embed/tv/${tmdb_id}/${season}/${episode}`
@@ -74,7 +69,12 @@ export class WatchComponent implements OnInit {
       name: 'VixSrc',
       getMovieUrl: (tmdb_id: number) => `https://vixsrc.to/movie/${tmdb_id}`,
       getTvUrl: (tmdb_id: number, season: number, episode: number) => `https://vixsrc.to/tv/${tmdb_id}/${season}/${episode}`
-    }
+    },
+    {
+      name: 'VidSrc',
+      getMovieUrl: (tmdb_id: number) => `https://vidsrc.me/embed/movie?tmdb=${tmdb_id}`,
+      getTvUrl: (tmdb_id: number, s: number, e: number) => `https://vidsrc.me/embed/tv?tmdb=${tmdb_id}&season=${s}&episode=${e}`
+    },
   ];
 
   ngOnInit() {
@@ -131,7 +131,7 @@ export class WatchComponent implements OnInit {
       }
 
       if (this.media.genres?.length) {
-        this.movieService.getMoviesByGenre(this.media.genres[0].id).subscribe(movies => {
+        this.movieService.getRelatedMovies(this.media.genres.map((genre: any) => genre.id), this.media.id).subscribe(movies => {
           this.similarMovies = movies.slice(0, 4);
           this.changeDetector.markForCheck();
         });

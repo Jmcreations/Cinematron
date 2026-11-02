@@ -59,18 +59,18 @@ export class WatchComponent implements OnInit {
     },
     {
       name: 'Hermes',
-      getMovieUrl: (tmdb_id: number) => `https://vidlink.pro/movie/${tmdb_id}`,
-      getTvUrl: (tmdb_id: number, season: number, episode: number) => `https://vidlink.pro/tv/${tmdb_id}/${season}/${episode}`
+      getMovieUrl: (tmdb_id: number) => `https://vidstreams.net/movie/${tmdb_id}`,
+      getTvUrl: (tmdb_id: number, season: number, episode: number) => `https://vidstreams.net/embed/tv/${tmdb_id}/${season}/${episode}/`
     },
     {
       name: 'Zeus',
-      getMovieUrl: (tmdb_id: number) => `https://vidstreams.net/embed/${tmdb_id}`,
-      getTvUrl: (tmdb_id: number, season: number, episode: number) => `https://vidstreams.net/embed/tv/${tmdb_id}/${season}/${episode}`
+      getMovieUrl: (tmdb_id: number) => `https://autoembed.cc?tmdb_id=${tmdb_id}`,
+      getTvUrl: (tmdb_id: number, season: number, episode: number) => `https://autoembed.cc/embed/tv/${tmdb_id}/${season}/${episode}`
     },
     {
       name: 'Athena',
-      getMovieUrl: (tmdb_id: number) => `https://vixsrc.to/movie/${tmdb_id}`,
-      getTvUrl: (tmdb_id: number, season: number, episode: number) => `https://vixsrc.to/tv/${tmdb_id}/${season}/${episode}`
+      getMovieUrl: (tmdb_id: number) => `https://api.2embed.cc/movie?${tmdb_id}`,
+      getTvUrl: (tmdb_id: number, season: number, episode: number) => `https://api.2embed.cc/tv?${tmdb_id}&season=${season}&episode=${episode}`
     },
     {
       name: 'Ares',

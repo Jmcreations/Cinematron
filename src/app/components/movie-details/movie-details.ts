@@ -5,8 +5,8 @@ import { DomSanitizer, SafeResourceUrl, Title, Meta } from '@angular/platform-br
 import { MovieService } from '../../services/movie';
 import { OverlayStateService, MediaSelection } from '../../services/overlay-state';
 import { WatchlistService } from '../../services/watchlist';
+import { WatchHistoryService, WatchHistoryMovie } from '../../services/watch-history';
 import { IconComponent } from '../icon/icon';
-import { StarRatingComponent } from '../star-rating/star-rating';
 import { catchError, filter, of, switchMap, timeout } from 'rxjs';
 
 export interface MediaDetails {
@@ -28,7 +28,7 @@ export interface MediaDetails {
 @Component({
   selector: 'app-movie-details',
   standalone: true,
-  imports: [CommonModule, IconComponent, StarRatingComponent],
+  imports: [CommonModule, IconComponent],
   templateUrl: './movie-details.html'
 })
 export class MovieDetailsComponent implements OnInit {
@@ -41,8 +41,10 @@ export class MovieDetailsComponent implements OnInit {
   renderer = inject(Renderer2);
   private changeDetector = inject(ChangeDetectorRef);
   private watchlistService = inject(WatchlistService);
+  private watchHistoryService = inject(WatchHistoryService);
 
   movie: MediaDetails | null = null;
+  historyEntry: WatchHistoryMovie | null = null;
   mediaType: 'movie' | 'tv' = 'movie'; // Track if it's a TV show or Movie
   cast: any[] = [];
   trailerUrl: SafeResourceUrl | null = null;
@@ -93,6 +95,7 @@ export class MovieDetailsComponent implements OnInit {
         }
         this.movie = data;
         this.saved = this.watchlistService.hasMovie(data.id);
+        this.historyEntry = this.watchHistoryService.getMovies().find(m => m.id === data.id) || null;
         this.cast = data.credits?.cast?.slice(0, 4) || [];
         this.loading = false;
         this.changeDetector.markForCheck();

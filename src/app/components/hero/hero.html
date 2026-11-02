@@ -1,13 +1,14 @@
 <section class="hero"
-(pointerdown)="onPointerDown($event)"
-(pointerup)="onPointerUp($event)"
-(pointercancel)="onPointerCancel()">
-
+         (pointerdown)="onPointerDown($event)"
+         (pointerup)="onPointerUp($event)"
+         (pointercancel)="onPointerCancel()">
   <ng-container *ngIf="movies.length > 0">
     <!-- Background Image & Gradient -->
     <img class="heroImage heroImageCurrent" [src]="movieService.getImageUrl(movies[heroIndex].backdrop_path, 'original')" alt="" />
     <img class="heroImage heroImagePrevious" *ngIf="previousMovie" [src]="movieService.getImageUrl(previousMovie.backdrop_path, 'original')" alt="" />
     <div class="heroShade"></div>
+
+    <!-- Invisible Edge Click Zones -->
     <div class="clickZone left" (click)="prevHero()" aria-label="Previous preview"></div>
     <div class="clickZone right" (click)="nextHero()" aria-label="Next preview"></div>
 
@@ -30,12 +31,11 @@
         </button>
 
         <button type="button" class="secondary" (click)="toggleSaved()">
-          <app-icon name="plus"></app-icon> {{ saved ? 'Added to My list' : 'Add to My list' }}
+          <app-icon name="plus"></app-icon> {{ saved ? 'In my list' : 'My list' }}
         </button>
       </div>
     </div>
 
-    <!-- Grouped Navigation (Arrows + Dots) -->
     <!-- Grouped Navigation (Dots Only) -->
     <div class="heroNav">
       <div class="heroDots">

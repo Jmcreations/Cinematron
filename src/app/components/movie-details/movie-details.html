@@ -38,20 +38,16 @@
         </div>
       </div>
 
-      <div class="rating">
-        <app-star-rating [rating]="userRating" (ratingChange)="userRating = $event"></app-star-rating>
-      </div>
+      <!-- Action Buttons -->
 
-      <!-- Stacking the buttons neatly at the bottom -->
       <div class="actions-stack">
         <button class="watchNow full" (click)="openTrailer()" *ngIf="trailerUrl">
           <app-icon name="play"></app-icon> Watch trailer
         </button>
-
         <button class="primary full" (click)="watchMovie()">
-          <app-icon name="play"></app-icon> Watch now
+          <app-icon name="play"></app-icon>
+          {{ historyEntry ? (mediaType === 'tv' ? 'Continue S' + historyEntry.watchSeason + ' E' + historyEntry.watchEpisode : 'Continue watching') : 'Watch now' }}
         </button>
-
         <button class="secondary full" (click)="toggleSaved()">
           <app-icon name="plus"></app-icon> {{ saved ? 'Added to your watchlist' : 'Add to watchlist' }}
         </button>

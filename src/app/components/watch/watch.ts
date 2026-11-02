@@ -5,7 +5,6 @@ import { DomSanitizer, SafeResourceUrl, Title, Meta } from '@angular/platform-br
 import { MovieService, TMDBMovie } from '../../services/movie';
 import { MovieCardComponent } from '../../components/movie-card/movie-card';
 import { IconComponent } from '../../components/icon/icon';
-import { StarRatingComponent } from '../../components/star-rating/star-rating';
 import { OverlayStateService } from '../../services/overlay-state';
 import { WatchHistoryService } from '../../services/watch-history';
 import { catchError, of, switchMap, timeout } from 'rxjs';
@@ -13,7 +12,7 @@ import { catchError, of, switchMap, timeout } from 'rxjs';
 @Component({
   selector: 'app-watch',
   standalone: true,
-  imports: [CommonModule, RouterModule, MovieCardComponent, IconComponent, StarRatingComponent],
+  imports: [CommonModule, RouterModule, MovieCardComponent, IconComponent],
   templateUrl: './watch.html',
   styleUrl: './watch.css'
 })
@@ -44,6 +43,8 @@ export class WatchComponent implements OnInit {
   activeServerIndex = 0;
   isPlaying = false;
   isFullscreen = false;
+  controlsVisible = true;
+  private controlsTimeout: any;
   episodeChangePending = false;
   loading = true;
   loadError = false;
@@ -52,27 +53,27 @@ export class WatchComponent implements OnInit {
   // Unified Server Config
   servers = [
     {
-      name: 'VidCore',
+      name: 'Apollo',
       getMovieUrl: (tmdb_id: number) => `https://vidcore.org/embed/movie/${tmdb_id}`,
       getTvUrl: (tmdb_id: number, season: number, episode: number) => `https://vidcore.org/embed/tv/${tmdb_id}/${season}/${episode}`
     },
     {
-      name: 'Vidlink',
+      name: 'Hermes',
       getMovieUrl: (tmdb_id: number) => `https://vidlink.pro/movie/${tmdb_id}`,
       getTvUrl: (tmdb_id: number, season: number, episode: number) => `https://vidlink.pro/tv/${tmdb_id}/${season}/${episode}`
     },
     {
-      name: 'Vidstreams',
+      name: 'Zeus',
       getMovieUrl: (tmdb_id: number) => `https://vidstreams.net/embed/${tmdb_id}`,
       getTvUrl: (tmdb_id: number, season: number, episode: number) => `https://vidstreams.net/embed/tv/${tmdb_id}/${season}/${episode}`
     },
     {
-      name: 'VixSrc',
+      name: 'Athena',
       getMovieUrl: (tmdb_id: number) => `https://vixsrc.to/movie/${tmdb_id}`,
       getTvUrl: (tmdb_id: number, season: number, episode: number) => `https://vixsrc.to/tv/${tmdb_id}/${season}/${episode}`
     },
     {
-      name: 'VidSrc',
+      name: 'Ares',
       getMovieUrl: (tmdb_id: number) => `https://vidsrc.me/embed/movie?tmdb=${tmdb_id}`,
       getTvUrl: (tmdb_id: number, s: number, e: number) => `https://vidsrc.me/embed/tv?tmdb=${tmdb_id}&season=${s}&episode=${e}`
     },
@@ -119,15 +120,20 @@ export class WatchComponent implements OnInit {
       }
       this.isPlaying = false;
       const historyEntry = this.watchHistory.getMovies().find(item => item.id === data.id);
+
+      // Default to history, or fallback to 1
       this.activeSeason = historyEntry?.watchSeason || 1;
       this.activeEpisode = historyEntry?.watchEpisode || 1;
 
       if (this.mediaType === 'tv') {
         this.seasons = data.seasons?.filter((s: any) => s.season_number > 0) || [];
-        const season = this.seasons.find(item => item.season_number === this.activeSeason) || this.seasons[0];
-        if (season) {
-          this.activeSeason = season.season_number;
-          this.loadSeason(season.season_number);
+
+        // Ensure the season we're loading is valid, fallback to first season if not
+        const seasonToLoad = this.seasons.find(item => item.season_number === this.activeSeason) || this.seasons[0];
+
+        if (seasonToLoad) {
+          this.activeSeason = seasonToLoad.season_number;
+          this.loadSeason(seasonToLoad.season_number);
         }
       }
 
@@ -162,17 +168,23 @@ export class WatchComponent implements OnInit {
     this.changeDetector.markForCheck();
   }
 
-  playContent(episodeNumber = 1) {
+  // Ensure playContent defaults to the tracked activeEpisode if none is passed
+  playContent(episodeNumber: number = this.activeEpisode) {
     this.activeEpisode = episodeNumber;
     this.isPlaying = true;
     this.episodeChangePending = this.mediaType === 'tv';
+
     this.watchHistory.addMovie({
       ...this.media,
       media_type: this.mediaType,
       watchSeason: this.mediaType === 'tv' ? this.activeSeason : undefined,
       watchEpisode: this.mediaType === 'tv' ? this.activeEpisode : undefined
     });
+
     this.updateVideoUrl();
+
+    this.onPlayerMouseMove();
+
     setTimeout(() => {
       this.playerElement?.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
@@ -201,12 +213,22 @@ export class WatchComponent implements OnInit {
     this.changeDetector.markForCheck();
   }
 
+  onPlayerMouseMove() {
+    this.controlsVisible = true;
+    clearTimeout(this.controlsTimeout);
+    this.controlsTimeout = setTimeout(() => {
+      this.controlsVisible = false;
+      this.changeDetector.markForCheck();
+    }, 3000); // Fades out after 3 seconds of idle time
+  }
+
   setServer(index: number) {
     this.activeServerIndex = index;
     if (this.isPlaying) this.updateVideoUrl();
   }
 
   goBack() { this.location.back(); }
+
   openDetails(event: any) {
     const id = typeof event === 'number' ? event : event.id;
     const type = event.type || 'movie';

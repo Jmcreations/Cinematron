@@ -7,21 +7,28 @@
       </a>
       <button class="back" (click)="goBack()">← Back</button>
     </div>
-    <button class="profileBtn"><app-icon name="user"></app-icon> Profile</button>
   </header>
 
-  <div class="player" #player>
-    <iframe #videoFrame *ngIf="isPlaying && videoUrl" [src]="videoUrl" (load)="onPlayerLoaded()" referrerpolicy="origin" width="100%" height="100%" frameborder="0" allowfullscreen allow="autoplay; encrypted-media; fullscreen; picture-in-picture" style="position: absolute; inset: 0; z-index: 5;"></iframe>
+  <!-- Update the class bindings on the player div -->
+<div class="player" #player [class.isFullscreen]="isFullscreen" [class.hideControls]="!controlsVisible && isPlaying" (mousemove)="onPlayerMouseMove()">
+    <iframe #videoFrame *ngIf="isPlaying && videoUrl"
+      [src]="videoUrl" (load)="onPlayerLoaded()"
+      referrerpolicy="origin"
+      width="100%" height="100%" frameborder="0"
+      allowfullscreen allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
+      sandbox="allow-scripts allow-same-origin allow-forms allow-presentation"
+      style="position: absolute; inset: 0; z-index: 5;">
+    </iframe>
     <button class="fullscreenButton" *ngIf="isPlaying && videoUrl" type="button" (click)="toggleFullscreen()" aria-label="Toggle fullscreen">
       <app-icon name="maximize"></app-icon>
       <span>Fullscreen</span>
-    </button>
+    </button>>
 
     <ng-container *ngIf="!isPlaying">
       <img [src]="movieService.getImageUrl(media.backdrop_path, 'original')" [alt]="media.name || media.title" />
       <div class="playerShade"></div>
 
-      <div class="bigPlay" (click)="playContent(1)">
+      <div class="bigPlay" (click)="playContent(activeEpisode)">
         <app-icon name="play"></app-icon>
       </div>
 
@@ -43,21 +50,16 @@
   <div class="playerFooter" *ngIf="isPlaying">
     <div class="serverSwitcher">
       <span>Server:</span>
-      <button *ngFor="let server of servers; let i = index"
-              [class.active]="activeServerIndex === i"
-              (click)="setServer(i)">
+      <button *ngFor="let server of servers; let i = index" [class.active]="activeServerIndex === i" (click)="setServer(i)">
         {{ server.name }}
       </button>
     </div>
     <div class="episodeNav" *ngIf="mediaType === 'tv'">
-      <label class="autoPlayToggle">
-        <input type="checkbox" [checked]="autoPlayNext" (change)="autoPlayNext = !autoPlayNext">
-        <span>Auto-play next</span>
-      </label>
       <button class="epNavBtn" [disabled]="!hasPrevEpisode" (click)="prevEpisode()">Prev</button>
       <button class="epNavBtn" [disabled]="!hasNextEpisode" (click)="nextEpisode()">Next</button>
     </div>
   </div>
+
   <p class="playbackStatus" *ngIf="episodeChangePending" role="status" aria-live="polite">
     Loading season {{ activeSeason }}, episode {{ activeEpisode }} in the player...
   </p>
@@ -71,9 +73,6 @@
           <h2>Episodes</h2>
         </div>
         <div class="headerTools">
-          <div class="ratingWrapper">
-            <app-star-rating [rating]="userRating" (ratingChange)="userRating = $event"></app-star-rating>
-          </div>
           <div class="seasonToggle">
             <button *ngFor="let s of seasons"
                     [class.active]="activeSeason === s.season_number"

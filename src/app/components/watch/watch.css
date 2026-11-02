@@ -94,6 +94,20 @@
 .playerInfo h1 { margin: 4px 0 8px; font: 800 48px "Manrope"; letter-spacing: -0.03em; }
 .playerInfo span { color: #a9a4a8; font-size: 12px; }
 
+.player.hideControls {
+  cursor: none;
+}
+
+/* Surrenders mouse control back to Angular and hides the ad link preview */
+.player.hideControls iframe {
+  pointer-events: none;
+}
+
+.player.hideControls .fullscreenButton {
+  opacity: 0;
+  pointer-events: none;
+}
+
 .timeline {
   position: absolute; left: 4vw; right: 4vw; bottom: 15px; z-index: 10;
   display: flex; align-items: center; gap: 15px;
@@ -254,19 +268,26 @@
   background: #b55f99;
 }
 
-/* Fullscreen Hover Logic */
-.player.isFullscreen {
-  cursor: none;
-}
-.player.isFullscreen:hover,
-.player.isFullscreen:mousemove {
-  cursor: default;
-}
-.player.isFullscreen .fullscreenButton {
-  opacity: 0;
+/* --- FULLSCREEN BUTTON PROXIMITY REVEAL --- */
+.fullscreenButton {
   transition: opacity 0.3s ease;
 }
-.player.isFullscreen:hover .fullscreenButton,
-.player.isFullscreen:mousemove .fullscreenButton {
+
+.player.isFullscreen .fullscreenButton {
+  opacity: 0;
+}
+
+/* Casts a large invisible hover-net around the button */
+.player.isFullscreen .fullscreenButton::after {
+  content: '';
+  position: absolute;
+  top: -150px;
+  left: -150px;
+  right: -50px;
+  bottom: -50px;
+}
+
+/* Fades the button in when the mouse enters the invisible net */
+.player.isFullscreen .fullscreenButton:hover {
   opacity: 1;
 }

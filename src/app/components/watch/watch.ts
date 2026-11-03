@@ -58,24 +58,29 @@ export class WatchComponent implements OnInit {
       getTvUrl: (tmdb_id: number, season: number, episode: number) => `https://vidcore.org/embed/tv/${tmdb_id}/${season}/${episode}`
     },
     {
-      name: 'Hermes',
-      getMovieUrl: (tmdb_id: number) => `https://vidstreams.net/movie/${tmdb_id}`,
-      getTvUrl: (tmdb_id: number, season: number, episode: number) => `https://vidstreams.net/embed/tv/${tmdb_id}/${season}/${episode}/`
-    },
-    {
-      name: 'Zeus',
-      getMovieUrl: (tmdb_id: number) => `https://autoembed.cc?tmdb_id=${tmdb_id}`,
-      getTvUrl: (tmdb_id: number, season: number, episode: number) => `https://autoembed.cc/embed/tv/${tmdb_id}/${season}/${episode}`
-    },
-    {
       name: 'Athena',
-      getMovieUrl: (tmdb_id: number) => `https://api.2embed.cc/movie?${tmdb_id}`,
-      getTvUrl: (tmdb_id: number, season: number, episode: number) => `https://api.2embed.cc/tv?${tmdb_id}&season=${season}&episode=${episode}`
+      getMovieUrl: (movie_id: number) => `https://player.videasy.ws/embed/movie/${movie_id}`,
+      getTvUrl: (show_id: number, season: number, episode: number) => `https://player.videasy.ws/embed/tv/${show_id}/${season}/${episode}`
     },
     {
       name: 'Ares',
       getMovieUrl: (tmdb_id: number) => `https://vidsrc.me/embed/movie?tmdb=${tmdb_id}`,
       getTvUrl: (tmdb_id: number, s: number, e: number) => `https://vidsrc.me/embed/tv?tmdb=${tmdb_id}&season=${s}&episode=${e}`
+    },
+    {
+      name: 'Persidon',
+      getMovieUrl: (TMDB_ID: number) => `https://vidnest.fun/movie/${TMDB_ID}`,
+      getTvUrl: (TMDB_ID: number, season: number, episode: number) => `https://vidnest.fun/tv/${TMDB_ID}/${season}/${episode}`
+    },
+    {
+      name: 'Hermes',
+      getMovieUrl: (TMDB_ID: number) => `https://autoembed.to/${TMDB_ID}`,
+      getTvUrl: (TMDB_ID: number, season: number, episode: number) => `https://autoembed.to/${TMDB_ID}/${season}/${episode}`
+    },
+    {
+      name: 'Zeus',
+      getMovieUrl: (tmdbId: number) => `https://vidlink.pro/movie/${tmdbId}`,
+      getTvUrl: (tmdbId: number, season: number, episode: number) => `https://vidlink.pro/tv/${tmdbId}/${season}/${episode}`
     },
   ];
 

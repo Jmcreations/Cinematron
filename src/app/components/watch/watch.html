@@ -5,9 +5,10 @@
       <a href="/" aria-label="Cinematron Home" class="brand">
         <img src="/trlogo.png" alt="" class="brand-image"><span>Cinematron</span>
       </a>
-      <button class="back" (click)="goBack()">← Back</button>
     </div>
   </header>
+
+  <button class="back" (click)="goBack()">← Back</button>
 
   <!-- Update the class bindings on the player div -->
 <div class="player" #player [class.isFullscreen]="isFullscreen" [class.hideControls]="!controlsVisible && isPlaying" (mousemove)="onPlayerMouseMove()">

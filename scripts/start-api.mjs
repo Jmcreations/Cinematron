@@ -35,7 +35,8 @@ try {
     process.exit(1);
   }
 } catch (error) {
-  console.error('Unable to validate TMDB_API_KEY. Check your network connection.', error);
+  const details = error instanceof Error ? error.message : String(error);
+  console.error(`Unable to validate TMDB_READ_ACCESS_TOKEN: ${details}`);
   process.exit(1);
 }
 

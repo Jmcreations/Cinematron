@@ -117,6 +117,9 @@ The migrations enable PostgreSQL row-level security (RLS) on the application
 tables and `alembic_version`. The API connects through the trusted database
 connection, while direct client access remains denied until explicit
 user-scoped RLS policies are added alongside verified authentication.
+PostgreSQL connections also use a 10-second connection timeout by default so a
+local API startup does not wait indefinitely when the hosted database is
+unavailable.
 
 ## Production checklist
 

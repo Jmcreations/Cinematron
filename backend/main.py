@@ -30,6 +30,8 @@ if SQLALCHEMY_DATABASE_URL.startswith(("postgres://", "postgresql://")):
         for key, value in parse_qsl(database_parts.query, keep_blank_values=True)
         if key != "supa"
     ]
+    if not any(key == "connect_timeout" for key, _ in database_query):
+        database_query.append(("connect_timeout", "10"))
     SQLALCHEMY_DATABASE_URL = urlunsplit((
         database_parts.scheme,
         database_parts.netloc,

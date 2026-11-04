@@ -41,6 +41,7 @@
   background: transparent;
   border: none;
   transition: color 0.2s;
+  padding: 8px 16px;
 }
 .back:hover { color: white; }
 .profileBtn {

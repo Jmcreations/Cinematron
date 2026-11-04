@@ -113,6 +113,11 @@ Do not copy the hosted connection string into a committed file. For local
 testing against the hosted database, place it only in the ignored `.env` file
 and run `npm run migrate` deliberately.
 
+The migrations enable PostgreSQL row-level security (RLS) on the application
+tables and `alembic_version`. The API connects through the trusted database
+connection, while direct client access remains denied until explicit
+user-scoped RLS policies are added alongside verified authentication.
+
 ## Production checklist
 
 - Add `TMDB_READ_ACCESS_TOKEN`, `POSTGRES_URL` (or `DATABASE_URL`), and `CORS_ORIGINS` to

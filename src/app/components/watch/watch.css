@@ -271,6 +271,7 @@
 /* --- FULLSCREEN BUTTON PROXIMITY REVEAL --- */
 .fullscreenButton {
   transition: opacity 0.3s ease;
+  bottom: 80px;
 }
 
 .player.isFullscreen .fullscreenButton {
@@ -284,7 +285,7 @@
   top: -150px;
   left: -150px;
   right: -50px;
-  bottom: -50px;
+  bottom: 80px;
 }
 
 /* Fades the button in when the mouse enters the invisible net */

@@ -79,6 +79,8 @@ npm run migrate
 the hosted PostgreSQL database with `npm run migrate` after setting
 `DATABASE_URL` or `POSTGRES_URL` in the environment. Vercel imports the API
 without running migrations during each serverless function initialization.
+TMDB proxy routes remain available without a database; database-backed routes
+return a clear configuration error until one of these variables is set.
 Create a new revision with Alembic
 after changing the SQLAlchemy models, review it, and commit the revision:
 

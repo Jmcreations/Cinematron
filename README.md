@@ -75,8 +75,11 @@ import. Apply pending migrations with:
 npm run migrate
 ```
 
-`npm start` runs migrations before starting the local API. Vercel runs them
-when the Python function is initialized. Create a new revision with Alembic
+`npm start` runs migrations before starting the local API. Apply migrations to
+the hosted PostgreSQL database with `npm run migrate` after setting
+`DATABASE_URL` or `POSTGRES_URL` in the environment. Vercel imports the API
+without running migrations during each serverless function initialization.
+Create a new revision with Alembic
 after changing the SQLAlchemy models, review it, and commit the revision:
 
 ```bash

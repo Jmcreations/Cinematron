@@ -17,10 +17,7 @@ default_database_url = (
     "sqlite:///./cinematron.db"
 )
 configured_database_url = os.getenv("DATABASE_URL") or os.getenv("POSTGRES_URL")
-if os.getenv("VERCEL") and not configured_database_url:
-    raise RuntimeError(
-        "DATABASE_URL or POSTGRES_URL must be configured for Vercel deployments."
-    )
+database_is_configured = bool(configured_database_url)
 SQLALCHEMY_DATABASE_URL = configured_database_url or default_database_url
 
 if SQLALCHEMY_DATABASE_URL.startswith(("postgres://", "postgresql://")):
@@ -104,6 +101,11 @@ app.add_middleware(
 
 # Dependency to open and close database sessions per request
 def get_db():
+    if not database_is_configured and os.getenv("VERCEL"):
+        raise HTTPException(
+            status_code=503,
+            detail="Database is not configured for this deployment.",
+        )
     db = SessionLocal()
     try:
         yield db

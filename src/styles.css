@@ -526,12 +526,10 @@ app-navbar {
   overflow: hidden;
   display: flex;
   align-items: flex-end;
-  /* Top padding ensures text/buttons don't overlap with the floating navbar */
-  padding: 130px 6vw 92px;
+  padding: 140px 6vw 80px;
+  margin-top: -100px;
   touch-action: pan-y;
   user-select: none;
-  /* Pulls the Hero image up underneath the 100px navbar padding to touch the top edge */
-  margin-top: -100px;
 }
 
 .hero > img {
@@ -545,24 +543,56 @@ app-navbar {
 }
 
 .heroImageCurrent {
-  z-index: 0;
+  z-index: 1;
   animation: heroReveal .65s ease both;
 }
 
 .heroImagePrevious {
-  z-index: 1;
+  z-index: 0;
   animation: heroFadeOut .7s ease both;
 }
 
 .heroShade {
   position: absolute;
   inset: 0;
-  /* Top gradient added to ensure floating navbar links are sharp and readable */
+  z-index: 2;
   background:
-    linear-gradient(180deg, rgba(18, 18, 18, 0.85) 0%, rgba(18, 18, 18, 0) 25%),
-    linear-gradient(90deg, rgba(10,9,10,.94) 0%, rgba(10,9,10,.66) 38%, rgba(10,9,10,.06) 73%),
-    linear-gradient(0deg, #121212 0%, transparent 26%);
+    linear-gradient(180deg, rgba(18, 18, 18, 0.85) 0%, rgba(18, 18, 18, 0) 30%),
+    linear-gradient(90deg, rgba(18, 18, 18, 0.95) 0%, rgba(18, 18, 18, 0.7) 40%, rgba(18, 18, 18, 0) 75%),
+    linear-gradient(0deg, #121212 0%, transparent 35%);
   pointer-events: none;
+}
+
+.heroContent {
+  position: relative;
+  z-index: 10; /* Keeps title, eyebrow, meta, and synopsis above the shade gradient */
+  max-width: 630px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.heroContent h1 {
+  margin: 12px 0 14px;
+  font: 800 clamp(40px, 5vw, 72px)/1.05 "Manrope", sans-serif;
+  letter-spacing: -.04em;
+  color: #ffffff;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.heroContent .synopsis {
+  max-width: 530px;
+  line-height: 1.65;
+  color: #d0cbd0;
+  font-size: 14px;
+  margin: 16px 0 24px;
+}
+
+.heroContent .actions {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  gap: 12px;
 }
 
 /* --- INVISIBLE EDGE CLICKS --- */

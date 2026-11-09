@@ -520,12 +520,14 @@ app-navbar {
 
 /* --- HERO SECTION --- */
 .hero {
-  height: 760px;
+  height: 820px;
+  min-height: 100vh;
   position: relative;
   overflow: hidden;
   display: flex;
   align-items: flex-end;
-  padding: 0 6vw 92px;
+  padding: 140px 6vw 80px;
+  margin-top: -100px;
   touch-action: pan-y;
   user-select: none;
 }
@@ -541,95 +543,56 @@ app-navbar {
 }
 
 .heroImageCurrent {
-  z-index: 0;
+  z-index: 1;
   animation: heroReveal .65s ease both;
 }
 
 .heroImagePrevious {
-  z-index: 1;
+  z-index: 0;
   animation: heroFadeOut .7s ease both;
 }
 
 .heroShade {
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, rgba(10,9,10,.94) 0%, rgba(10,9,10,.66) 38%, rgba(10,9,10,.06) 73%),
-              linear-gradient(0deg, #121212 0%, transparent 26%);
+  z-index: 2;
+  background:
+    linear-gradient(180deg, rgba(18, 18, 18, 0.85) 0%, rgba(18, 18, 18, 0) 30%),
+    linear-gradient(90deg, rgba(18, 18, 18, 0.95) 0%, rgba(18, 18, 18, 0.7) 40%, rgba(18, 18, 18, 0) 75%),
+    linear-gradient(0deg, #121212 0%, transparent 35%);
   pointer-events: none;
 }
 
 .heroContent {
   position: relative;
-  z-index: 2;
+  z-index: 10; /* Keeps title, eyebrow, meta, and synopsis above the shade gradient */
   max-width: 630px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.heroContent h1 {
+  margin: 12px 0 14px;
+  font: 800 clamp(40px, 5vw, 72px)/1.05 "Manrope", sans-serif;
+  letter-spacing: -.04em;
+  color: #ffffff;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.heroContent .synopsis {
+  max-width: 530px;
+  line-height: 1.65;
+  color: #d0cbd0;
+  font-size: 14px;
+  margin: 16px 0 24px;
 }
 
 .heroContent .actions {
   position: relative;
   z-index: 10;
   display: flex;
-  gap: 10px;
-}
-
-.synopsis {
-  max-width: 530px;
-  line-height: 1.7;
-  color: #c2bec1;
-  font-size: 14px;
-  margin: 20px 0 28px;
-}
-
-.heroNav {
-  position: absolute;
-  z-index: 3;
-  right: 6vw;
-  bottom: 38px;
-  display: flex;
-  align-items: center;
   gap: 12px;
-}
-
-.heroDots {
-  display:flex;
-  align-items:center;
-  gap:7px; }
-
-.heroDots button {
-  width: 22px;
-  height: 3px;
-  padding: 0;
-  border: 0;
-  background: #777277;
-  border-radius: 2px;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-  transition: width 0.3s ease, background 0.25s ease;
-}
-
-.heroDots button.active {
-  width: 42px;
-  background: #a25a89;
-}
-
-.heroDots button .progress-bar {
-  position: absolute;
-  inset: 0;
-  background: #640157;
-  width: 0%;
-  animation: loaderBar 8s linear forwards;
-}
-
-.heroVerticalText {
-  position: absolute;
-  right: 6vw;
-  bottom: 130px;
-  writing-mode: vertical-rl;
-  color: #777277;
-  font: 600 10px "Manrope", sans-serif;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  z-index: 10;
 }
 
 /* --- INVISIBLE EDGE CLICKS --- */

@@ -3,5 +3,8 @@
     "python.analysis.extraPaths": [
         "${workspaceFolder}"
     ],
-    "python.terminal.useEnvFile": true
+    "python.terminal.useEnvFile": true,
+    "githubPullRequests.ignoredPullRequestBranches": [
+        "main"
+    ]
 }

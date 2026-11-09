@@ -6,19 +6,23 @@
   flex-direction: column;
 }
 
-/* Header */
+/* --- WATCH HEADER & BACK BUTTON --- */
 .watchHeader {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 20px 4vw;
-  background: #121212;
+  padding: 16px 4vw;
+  background: transparent;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  margin-bottom: 0;
 }
+
 .headerLeft {
   display: flex;
   align-items: center;
-  gap: 30px;
+  gap: 20px; /* Clean offset between brand logo and back button */
 }
+
 .brand {
   display: flex;
   align-items: center;
@@ -28,22 +32,44 @@
   color: white;
   text-decoration: none;
 }
-/*.brand span {
-  width: 28px; height: 28px; border-radius: 6px 6px 6px 2px;
-  background: #640157; display: grid; place-items: center;
-  font-family: serif; font-size: 15px;
-}*/
 
+/* Glassmorphism Back Pill Button */
 .back {
-  color: #9a969a;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #e0dce0;
   font-size: 12px;
+  font-weight: 500;
+  font-family: "DM Sans", sans-serif;
   cursor: pointer;
-  background: transparent;
-  border: none;
-  transition: color 0.2s;
-  padding: 8px 16px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
-.back:hover { color: white; }
+
+.back:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.25);
+  transform: translateX(-3px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.back svg {
+  width: 15px;
+  height: 15px;
+  transition: transform 0.2s ease;
+}
+
+.back:hover svg {
+  transform: translateX(-2px);
+}
+
 .profileBtn {
   display: flex;
   align-items: center;

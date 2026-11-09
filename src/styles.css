@@ -520,14 +520,18 @@ app-navbar {
 
 /* --- HERO SECTION --- */
 .hero {
-  height: 760px;
+  height: 820px;
+  min-height: 85vh;
   position: relative;
   overflow: hidden;
   display: flex;
   align-items: flex-end;
-  padding: 0 6vw 92px;
+  /* Top padding ensures text/buttons don't overlap with the floating navbar */
+  padding: 130px 6vw 92px;
   touch-action: pan-y;
   user-select: none;
+  /* Pulls the Hero image up underneath the 100px navbar padding to touch the top edge */
+  margin-top: -100px;
 }
 
 .hero > img {
@@ -553,83 +557,12 @@ app-navbar {
 .heroShade {
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, rgba(10,9,10,.94) 0%, rgba(10,9,10,.66) 38%, rgba(10,9,10,.06) 73%),
-              linear-gradient(0deg, #121212 0%, transparent 26%);
+  /* Top gradient added to ensure floating navbar links are sharp and readable */
+  background:
+    linear-gradient(180deg, rgba(18, 18, 18, 0.85) 0%, rgba(18, 18, 18, 0) 25%),
+    linear-gradient(90deg, rgba(10,9,10,.94) 0%, rgba(10,9,10,.66) 38%, rgba(10,9,10,.06) 73%),
+    linear-gradient(0deg, #121212 0%, transparent 26%);
   pointer-events: none;
-}
-
-.heroContent {
-  position: relative;
-  z-index: 2;
-  max-width: 630px;
-}
-
-.heroContent .actions {
-  position: relative;
-  z-index: 10;
-  display: flex;
-  gap: 10px;
-}
-
-.synopsis {
-  max-width: 530px;
-  line-height: 1.7;
-  color: #c2bec1;
-  font-size: 14px;
-  margin: 20px 0 28px;
-}
-
-.heroNav {
-  position: absolute;
-  z-index: 3;
-  right: 6vw;
-  bottom: 38px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.heroDots {
-  display:flex;
-  align-items:center;
-  gap:7px; }
-
-.heroDots button {
-  width: 22px;
-  height: 3px;
-  padding: 0;
-  border: 0;
-  background: #777277;
-  border-radius: 2px;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-  transition: width 0.3s ease, background 0.25s ease;
-}
-
-.heroDots button.active {
-  width: 42px;
-  background: #a25a89;
-}
-
-.heroDots button .progress-bar {
-  position: absolute;
-  inset: 0;
-  background: #640157;
-  width: 0%;
-  animation: loaderBar 8s linear forwards;
-}
-
-.heroVerticalText {
-  position: absolute;
-  right: 6vw;
-  bottom: 130px;
-  writing-mode: vertical-rl;
-  color: #777277;
-  font: 600 10px "Manrope", sans-serif;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  z-index: 10;
 }
 
 /* --- INVISIBLE EDGE CLICKS --- */

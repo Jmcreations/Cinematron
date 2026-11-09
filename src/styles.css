@@ -521,7 +521,7 @@ app-navbar {
 /* --- HERO SECTION --- */
 .hero {
   height: 820px;
-  min-height: 85vh;
+  min-height: 100vh;
   position: relative;
   overflow: hidden;
   display: flex;
